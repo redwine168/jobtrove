@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, Helvetica;
+    font-size: 14pt;
+    margin: 3em;
+    color: white;
+    background: rgb(114, 114, 194);
+}
+
+h1 {
+    font-size: 100pt;
+    color: red;
+}
+
+a.navButton {
+    border-radius: 25px;
+    background-color: rgb(114, 114, 194);
+    border: 3px solid white;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 13pt;
+    font-weight: normal;
+    text-decoration: none;
+}
+
+a.navButton:hover {
+    border-style: dashed;
+}

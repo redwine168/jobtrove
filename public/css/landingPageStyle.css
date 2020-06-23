@@ -1,0 +1,35 @@
+body {
+    font-family: Arial, Helvetica;
+    font-size: 14pt;
+    margin: 3em;
+    color: white;
+    background: rgb(114, 114, 194);
+}
+
+h1 {
+    text-align: center;
+}
+
+h3 {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+}
+
+div {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.navImg {
+    border: 6px solid black;
+    transition: transform .2s;
+}
+
+.navImg:hover {
+    border-style: dashed;
+    transform: scale(1.05);
+}
+
