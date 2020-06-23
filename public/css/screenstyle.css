@@ -14,3 +14,18 @@ h1 {
 h2 {
     text-align: center
 }
+
+
+.loginForm {
+    padding: 20px;
+    margin-left: 25%;
+    margin-right: 25%;
+    border: 2px solid white;
+    text-align: center;
+}
+
+.errorMessage {
+    font-size: 10pt;
+    font-weight: bold;
+    color: #ff471a;
+}

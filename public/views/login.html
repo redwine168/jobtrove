@@ -8,6 +8,14 @@
     <body>
         <h1>Welcome to Trove!</h1>
         <h2>Helping Gabby be Gabby</h2>
+        <form class="loginForm" id="login-form" onsubmit="return validateForm()" action="/UserHomePage">
+            <input type="text" id="username" placeholder="username">
+            <p class="errorMessage" id="usernameErrorMessage"> </p>
+            <input type="password" id="password" placeholder="password">
+            <p class="errorMessage" id="passwordErrorMessage"> </p>
+            <button type="submit">Sign In</button>
+        </form>
         
+        <script src="js/login.js"></script>
     </body>
 </html>
