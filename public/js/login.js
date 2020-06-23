@@ -20,7 +20,7 @@ function validateForm() {
 
     // if none of the validations failed 
     if (goodToPost) {
-        alert("Nice!")
+        console.log("Successful login");
     }
     return goodToPost
 }
