@@ -15,6 +15,15 @@ h2 {
     text-align: center
 }
 
+h2 .accountCreationMessage {
+    font-size: 30pt;
+}
+
+a {
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
 
 .login-form {
     width: 300px;
@@ -30,7 +39,8 @@ h2 {
     padding: 20px 0 20px 0;
 }
 .login-form input[type="password"],
-.login-form input[type="text"] {
+.login-form input[type="text"],
+.login-form input[type="email"] {
     width: 100%;
     padding: 15px;
     border: 1px solid #dddddd;
@@ -46,10 +56,4 @@ h2 {
     cursor: pointer;
     font-weight: bold;
     color: #ffffff;
-}
-
-.errorMessage {
-    font-size: 10pt;
-    font-weight: bold;
-    color: #ff471a;
 }
