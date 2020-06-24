@@ -8,15 +8,17 @@
     <body>
         <div class="login-form">
 			<h1>Create Trove account</h1>
-			<form action="insertUser" method="POST">
-				<input type="text" name="username" placeholder="Username" minlength="2" maxlength="16" required>
-                <input type="password" name="password" placeholder="Password" minlength="2" maxlength="20" required>
-                <input type="email" name="email" placeholder="Email address" required>
+			<form action="javascript:createAccount()">
+				<input type="text" name="username" placeholder="Username" minlength="2" maxlength="16" autocomplete="off" required>
+                <input type="password" name="password" placeholder="Password" minlength="2" maxlength="20" autocomplete="off" required>
+                <input type="email" name="email" placeholder="Email address" maxlength="30" autocomplete="off" required>
 				<input type="submit">
 			</form>
         </div>
-        <a href="/">Already have an account?  Log in</a>
-        <h2 class="accountCreationMessage">First</h2>
+        <div class="login-redirect">
+            <a href="/">Already have an account?  Log in</a>
+        </div>
+        <h3 id="accountCreationMessage"></h3>
         
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
         <script src="js/createAccount.js"></script>

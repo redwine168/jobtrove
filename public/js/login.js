@@ -7,11 +7,11 @@ function validateLogin() {
         url: '/auth',
         data: {"username" : username, "password" : password},
         success: function(result) {
-            console.log("yair")
             if (typeof result.redirect == 'string') {
                 window.location = result.redirect
             } else {
-                alert(result.message)
+                $("#loginMessage").css('color', '#f02626')
+                $("#loginMessage").html(result.message)
             }    
         }
     })

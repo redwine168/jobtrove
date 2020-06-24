@@ -46,26 +46,7 @@ app.get('/', function(request, response) {
 // GET for account creation page page
 app.get('/createAccount', function(request, response) {
     console.log("Request for account creation page");
-    if (request.session.justCreatedAccount) {
-        data = {
-            "accountCreationAttempt" : true,
-            "success": true,
-            "message": "Account successfully created!"
-        };
-        response.render(publicDirectoryPath + 'views/createAccount.html', data);
-    } else if (request.session.failureUsernameTaken) {
-        data = {
-            "accountCreationAttempt" : true,
-            "success": false,
-            "message": "Username already in use."
-        };
-        response.render(publicDirectoryPath + 'views/createAccount.html', data);
-    } else {
-        data = {
-            "accountCreationAttempt" : false
-        };
-        response.render(publicDirectoryPath + 'views/createAccount.html', data);
-    }
+    response.render(publicDirectoryPath + 'views/createAccount.html');
 });
 
 
@@ -109,32 +90,43 @@ app.post('/insertUser', function(request, response) {
     var username = request.body.username;
     var password = request.body.password;
     var email = request.body.email;
-    if (username && password && email) {
-        // open db connection
-        sql.connect(config, function (err) {
-            if (err) console.log(err);
-            var dbConnection = new sql.Request();
-            dbConnection.input('username', sql.VarChar, username);
-            dbConnection.input('password', sql.VarChar, password);
-            dbConnection.input('email', sql.VarChar, email);
-            // First, see if 
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('username', sql.VarChar, username);
+        dbConnection.input('password', sql.VarChar, password);
+        dbConnection.input('email', sql.VarChar, email);
 
-            var query_sql = 'INSERT INTO Users(username,password,email) VALUES(@username,@password,@email)'
-            dbConnection.query(query_sql).then(function(results) {
-                if (results["rowsAffected"][0] > 0) {
-                    request.session.justCreatedAccount = true;
-                    response.redirect('/createAccount');
-                }
-                else {
-                    request.session.failureUsernameTaken = true;
-                    response.redirect('/createAccount');
-                }
-            });
-        });
-    } else {
-        response.send('Please enter username, password, and email!');
-		response.end();
-    }
+        // First, look to see if this username is in use
+        var sql_checkUsernameInUse = 'SELECT * FROM Users WHERE username = @username';
+        dbConnection.query(sql_checkUsernameInUse).then(function(usernameResults) {
+            // If no results, username is available
+            if (usernameResults.recordset.length == 0) {
+                // Next, check if email is in use
+                var sql_checkEmailInUse = 'SELECT * FROM Users WHERE email = @email';
+                dbConnection.query(sql_checkEmailInUse).then(function(emailResults) {
+                    // If no results, email is not assigned to a different account
+                    if (emailResults.recordset.length == 0) {
+                        // And we can insert new account into table
+                        var sql_insertUser = 'INSERT INTO Users(username,password,email) VALUES(@username,@password,@email)'
+                        dbConnection.query(sql_insertUser).then(function(insertResults) {
+                            response.send({message: "Account created successfully!"});
+                        });
+                    }
+                    // If results, email is associated to another account
+                    else {
+                        response.send({message: "That email address is already in use!"});
+                    }
+                })
+            }
+            // If results, username is in use and attempt fails
+            else {
+                response.send({message: "Username not available!"});
+            }
+        })
+    });
 });
 
 
