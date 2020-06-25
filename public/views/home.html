@@ -6,10 +6,114 @@
         <link rel="stylesheet" href="/css/screenstyle.css">
     </head>
     <body>
-        
-        <h1>Welcome home!</h1>
+        <div class="home-container">
+            <div class="home-sidebar">
+                <p class="sidebarUsername"></p>
+            </div>
+            <div class="board">
+                <button class="open-button" onclick="openJobApplicationForm()">Create New Job</button>
+                <div class="form-popup" id="job-application-popup-form">
+                    <form action="javascript:validateNewJobApplication()" class="submission-form-container">
+                        <h1>Add Job Application</h1>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+                        <label for="columnSelection"><b>Column</b></label>
+                        <select name="columnSelection" id="columnSelection">
+                            <option value="Interested">Interested</option>
+                            <option value="Applied" selected>Applied</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    
+                        <label for="companyName"><b>Company Name</b></label>
+                        <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
+                    
+                        <label for="jobTitle"><b>Job Title</b></label>
+                        <input type="text" placeholder="Enter Job Title" name="jobTitle" autocapitalize="off" required>
+
+                        <label for="dateApplied"><b>Date Applied</b></label>
+                        <input type="date" name="dateApplied">
+
+                        <input type="hidden" name="userID" id="userID" required>
+                    
+                        <button type="submit" class="btn">Create</button>
+                        <button type="button" class="btn cancel" onclick="closeJobApplicationForm()">Cancel</button>
+                    </form>
+                </div>
+
+                <div class="submission-error-popup" id="bad-job-application-popup">
+                    <p class="submission-error-message" id="submission-error-message"></p>
+                    <button type="button" class="submission-error-btn" onclick="hideSubmissionErrorPopup()">OK</button>
+                </div>
+
+                <div class="board-column">
+                    <h3>Rejected</h3>
+                    <div class="job-application-container" id="rejected-column"></div>
+                </div>
+
+                <div class="board-column">
+                    <h3>Accepted</h3>
+                    <div class="job-application-container" id="accepted-column"></div>
+                </div>
+
+                <div class="board-column">
+                    <h3>Applied</h3>
+                    <div class="job-application-container" id="applied-column"></div>
+                </div>
+
+                <div class="board-column">
+                    <h3>Interested</h3>
+                    <div class="job-application-container" id="interested-column"></div>
+                </div>
+                
+            </div>
+        </div>
+
+        <script id="interested-list-template" type="text/html">
+            {{#interestedList}}
+            <div class="job-application" id="interested-job-application">
+                <p>{{CompanyName}}</p>
+                <p style="font-size:10pt;">{{JobTitle}}</p>
+            </div>
+            {{/interestedList}}
+        </script>
+        <script id="applied-list-template" type="text/html">
+            {{#appliedList}}
+            <div class="job-application" id="applied-job-application">
+                <p>{{CompanyName}}</p>
+                <p style="font-size:10pt;">{{JobTitle}}</p>
+                <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
+            </div>
+            {{/appliedList}}
+        </script>
+        <script id="accepted-list-template" type="text/html">
+            {{#acceptedList}}
+            <div class="job-application" id="accepted-job-application">
+                <p>{{CompanyName}}</p>
+                <p style="font-size:10pt;">{{JobTitle}}</p>
+                <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
+            </div>
+            {{/acceptedList}}
+        </script>
+        <script id="rejected-list-template" type="text/html">
+            {{#rejectedList}}
+            <div class="job-application" id="rejected-job-application">
+                <p>{{CompanyName}}</p>
+                <p style="font-size:10pt;">{{JobTitle}}</p>
+                <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
+            </div>
+            {{/rejectedList}}
+        </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+                var username = "<%= username %>";
+                var userID = "<%= userID %>";
+                $(".sidebarUsername").html(username);
+                $('#userID').val(userID)
+        </script>
+        
         <script src="../js/home.js"></script>
     </body>
 </html>

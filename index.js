@@ -24,7 +24,8 @@ const publicDirectoryPath = path.join(__dirname, 'public/');
 app.use(express.static(publicDirectoryPath));
 app.use(cookieParser());
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio.listen(server)
+
 
 // Database config
 var config = {
@@ -52,8 +53,11 @@ app.get('/createAccount', function(request, response) {
 
 // GET for home
 app.get('/home', function(request, response) {
+    var username = request.session.username;
+    var userID = request.session.userID;
 	if (request.session.loggedin) {
-		response.render(publicDirectoryPath + 'views/home.html');
+        response.cookie = {username: request.session.username}
+		response.render(publicDirectoryPath + 'views/home.html', {username: username, userID: userID});
 	} else {
 		response.send('Please login to view this page!');
 	}
@@ -75,6 +79,7 @@ app.post('/auth', function(request, response) {
             if (results.recordset.length > 0) {
                 request.session.loggedin = true;
                 request.session.username = username;
+                request.session.userID = results.recordset[0]["ID"];
                 response.send({redirect: '/home'});
             } else {
                 response.send({message: "Incorrect Username and/or Password!"});
@@ -130,9 +135,63 @@ app.post('/insertUser', function(request, response) {
 });
 
 
-app.post('/test', function(request, response) {
-    response.send({message: "omg!"})
+app.post('/insertJobApplication', function(request, response) {
+    // Get input info
+    var companyName = request.body.companyName;
+    var jobTitle = request.body.jobTitle;
+    var dateApplied = request.body.dateApplied;
+    var userID = request.body.userID;
+    var column = request.body.column;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('companyName', sql.VarChar, companyName);
+        dbConnection.input('jobTitle', sql.VarChar, jobTitle);
+        dbConnection.input('dateApplied', sql.VarChar, dateApplied);
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('column', sql.VarChar, column);
+        var sql_insertJobApplication = 'INSERT INTO JobApplications(UserID,CompanyName,JobTitle,DateApplied,BoardColumn) VALUES (@userID,@companyName,@jobTitle,@dateApplied,@column)'
+        dbConnection.query(sql_insertJobApplication).then(function(insertResults) {
+            response.send({message: "Job Application created successfully!"});
+        });
+    })
 })
 
 
-app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
+
+
+
+// --------------------
+// ------ SOCKET ------
+// --------------------
+
+// When a user connects
+io.on('connection', (socket) => {
+
+    // When a user enters their homepage
+    socket.on('homepage-refresh-request', (userInfo, callback) => {
+        // Get user info and add socket to appropriate room
+        var userID = userInfo.userID;
+        console.log(userID + " at their home page!")
+        socket.join('home' + userID);
+
+        // open db connection
+        sql.connect(config, function(err) {
+            if (err) console.log(err);
+            // Initialize connection and parameters
+            var dbConnection = new sql.Request();
+            dbConnection.input('userID', sql.Int, userID);
+            var sql_getJobApplications = 'SELECT * FROM JobApplications WHERE UserID=@userID';
+            dbConnection.query(sql_getJobApplications).then(function(results) {
+                socket.emit('jobApplications', results.recordset);
+            })
+        })
+    })
+})
+
+
+
+// Listen
+server.listen(port, () => console.log(`App listening at http://localhost:${port}`));

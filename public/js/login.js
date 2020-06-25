@@ -1,7 +1,7 @@
 
 function validateLogin() {
-    username = $("input[name=username]").val();
-    password = $("input[name=password]").val();
+    var username = $("input[name=username]").val();
+    var password = $("input[name=password]").val();
     $.ajax({
         type: 'POST',
         url: '/auth',
