@@ -160,6 +160,23 @@ app.post('/insertJobApplication', function(request, response) {
 })
 
 
+app.post('/deleteJobApplication', function(request, response) {
+    // Get input info
+    var jobApplicationID = request.body.jobApplicationID;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('jobApplicationID', sql.Int, jobApplicationID);
+        var sql_deleteJobApplication = 'DELETE FROM JobApplications WHERE ID=@jobApplicationID';
+        dbConnection.query(sql_deleteJobApplication).then(function(deletionResults) {
+            response.send({message: "Job Application deleted successfully!"});
+        });
+    })
+})
+
+
 
 
 
@@ -174,8 +191,8 @@ io.on('connection', (socket) => {
     socket.on('homepage-refresh-request', (userInfo, callback) => {
         // Get user info and add socket to appropriate room
         var userID = userInfo.userID;
-        console.log(userID + " at their home page!")
-        socket.join('home' + userID);
+        var room = 'home' + userID;
+        socket.join(room);
 
         // open db connection
         sql.connect(config, function(err) {
@@ -186,6 +203,7 @@ io.on('connection', (socket) => {
             var sql_getJobApplications = 'SELECT * FROM JobApplications WHERE UserID=@userID';
             dbConnection.query(sql_getJobApplications).then(function(results) {
                 socket.emit('jobApplications', results.recordset);
+                io.to(room).emit('jobApplications', results.recordset);
             })
         })
     })

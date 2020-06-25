@@ -119,6 +119,26 @@ a:hover {
     margin-bottom: 5px;
 }
 
+.delete-job-application-btn {
+    float: right;
+    margin-right: 10px;
+    color: white;
+    background-color: red;
+    border: 1px solid white;
+    border-radius: 50px;
+}
+
+.delete-job-application-popup {
+    display: none;
+    position: fixed;
+    max-width: 100px;
+    border: 2px solid red;
+    background: #c74242;
+    z-index: 10;
+    text-align: center;
+    z-index: 11;
+}
+
 #interested-job-application {
     background: gold;
 }
@@ -135,11 +155,13 @@ a:hover {
     background: red;
 }
 
-/* Button used to open the contact form - fixed at the bottom of the page */
+/* Button used to open the Create New Job form - fixed at the bottom of the page */
 .open-button {
   background-color: #555;
   color: white;
   width: 13%;
+  height: 10%;
+  border-radius: 10px;
 }
 
 /* The popup form - hidden by default */

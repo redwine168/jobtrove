@@ -101,7 +101,7 @@ function validateNewJobApplication() {
 function showSubmissionErrorPopup(inputWithError, errorMessage) {
     var position = inputWithError.position();
     $("#bad-job-application-popup").offset(position);
-    $("#submission-error-message").html(errorMessage)
+    $("#submission-error-message").html(errorMessage);
     document.getElementById("bad-job-application-popup").style.display = "block";
 }
 
@@ -112,6 +112,43 @@ function hideSubmissionErrorPopup() {
     document.getElementById("bad-job-application-popup").style.display = "none";
 }
 
+
+// Function for showing job application deletion popup
+function showJobApplicationDeletionPopup(btn) {
+    $("#delete-job-application-popup").offset($(btn).position());
+    $("#delete-job-application-btn-yes").val($(btn).val());
+    document.getElementById("delete-job-application-popup").style.display = "block";
+}
+
+function hideJobApplicationDeletionPopup() {
+    document.getElementById("delete-job-application-popup").style.display = "none";
+}
+
+function deleteJobApplication(btn) {
+    var jobApplicationID = $(btn).val();
+    $.ajax({
+        type: 'POST',
+        url: '/deleteJobApplication',
+        data: {
+            "jobApplicationID": jobApplicationID
+        },
+        success: function(result) {
+            console.log(result.message);
+            hideJobApplicationDeletionPopup();
+            // Emit a homepage refresh request to get updated list of job applications
+            socket.emit('homepage-refresh-request', {userID}, (error) => {
+                if (error) {
+                    alert(error)
+                    location.href = '/home'
+                }
+            })
+        }
+    })
+}
+
+
+
+// Socket events
 
 // When the server sends list of job applications for the user
 socket.on('jobApplications', (jobApplications) => {
