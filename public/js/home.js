@@ -82,7 +82,7 @@ function validateNewJobApplication() {
                 "column": column
             },
             success: function(result) {
-                console.log(result.message);
+                //console.log(result.message);
                 closeJobApplicationForm();
                 // Emit a homepage refresh request to get updated list of job applications
                 socket.emit('homepage-refresh-request', {userID}, (error) => {
@@ -133,7 +133,7 @@ function deleteJobApplication(btn) {
             "jobApplicationID": jobApplicationID
         },
         success: function(result) {
-            console.log(result.message);
+            //console.log(result.message);
             hideJobApplicationDeletionPopup();
             // Emit a homepage refresh request to get updated list of job applications
             socket.emit('homepage-refresh-request', {userID}, (error) => {
@@ -144,6 +144,71 @@ function deleteJobApplication(btn) {
             })
         }
     })
+}
+
+
+// Drag and drop
+function onDragStart(event) {
+    console.log("dragging");
+    const jobApplicationID = $(event.target).find("button").val();
+    const originColumn = $(event.target).parent()[0].id
+    const dragData = {jobApplicationID: jobApplicationID, originColumn: originColumn}
+    event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+}
+
+function onDragOver(event) {
+    event.preventDefault();
+}
+
+function onDrop(event) {
+    console.log("dropped!")
+    const dragData = JSON.parse(event.dataTransfer.getData('text'));
+    const jobApplicationID = dragData.jobApplicationID;
+    const originColumn = dragData.originColumn;
+    const destColumn = $(event.target)[0].id;
+    // If application dragged to column different from where it started
+    if (originColumn != destColumn) {
+        updateJobApplicationColumn(jobApplicationID, destColumn);
+    }
+}
+
+
+// Update Job Application column
+function updateJobApplicationColumn(jobApplicationID, destColumn) {
+    var goodToPost = true;
+    if (destColumn == "interested-column") {
+        destColumn = "Interested"
+    } else if (destColumn == "applied-column") {
+        destColumn = "Applied"
+    } else if (destColumn == "accepted-column") {
+        destColumn = "Accepted"
+    } else if (destColumn == "rejected-column") {
+        destColumn = "Rejected"
+    } else {
+        console.log("Bad column name during drag and drop");
+        goodToPost = false;
+    }
+    // POST if everything is okay
+    if (goodToPost) {
+        $.ajax({
+            type: 'POST',
+            url: '/updateJobApplicationColumn',
+            data: {
+                "jobApplicationID": jobApplicationID,
+                "destColumn": destColumn
+            },
+            success: function(result) {
+                //console.log(result.message);
+                // Emit a homepage refresh request to get updated list of job applications
+                socket.emit('homepage-refresh-request', {userID}, (error) => {
+                    if (error) {
+                        alert(error)
+                        location.href = '/home'
+                    }
+                })
+            }
+        })
+    }
 }
 
 

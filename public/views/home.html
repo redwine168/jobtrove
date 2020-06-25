@@ -51,22 +51,22 @@
                     <button type="button" class="delete-job-application-btn-no" onclick="hideJobApplicationDeletionPopup()">No</button>
                 </div>
 
-                <div class="board-column">
+                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
                     <h3>Rejected</h3>
                     <div class="job-application-container" id="rejected-column"></div>
                 </div>
 
-                <div class="board-column">
+                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
                     <h3>Accepted</h3>
                     <div class="job-application-container" id="accepted-column"></div>
                 </div>
 
-                <div class="board-column">
+                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
                     <h3>Applied</h3>
                     <div class="job-application-container" id="applied-column"></div>
                 </div>
 
-                <div class="board-column">
+                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
                     <h3>Interested</h3>
                     <div class="job-application-container" id="interested-column"></div>
                 </div>
@@ -76,7 +76,7 @@
 
         <script id="interested-list-template" type="text/html">
             {{#interestedList}}
-            <div class="job-application" id="interested-job-application">
+            <div class="job-application" id="interested-job-application" draggable="true" ondragstart="onDragStart(event)">
                     <button type="submit" class="delete-job-application-btn" value="{{ID}}" onclick="showJobApplicationDeletionPopup(this)">X</button>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
@@ -85,7 +85,7 @@
         </script>
         <script id="applied-list-template" type="text/html">
             {{#appliedList}}
-            <div class="job-application" id="applied-job-application">
+            <div class="job-application" id="applied-job-application" draggable="true" ondragstart="onDragStart(event)">
                     <button type="submit" class="delete-job-application-btn" value="{{ID}}" onclick="showJobApplicationDeletionPopup(this)">X</button>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
@@ -95,7 +95,7 @@
         </script>
         <script id="accepted-list-template" type="text/html">
             {{#acceptedList}}
-            <div class="job-application" id="accepted-job-application">
+            <div class="job-application" id="accepted-job-application" draggable="true" ondragstart="onDragStart(event)">
                 <button type="submit" class="delete-job-application-btn" value="{{ID}}" onclick="showJobApplicationDeletionPopup(this)">X</button>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
@@ -105,7 +105,7 @@
         </script>
         <script id="rejected-list-template" type="text/html">
             {{#rejectedList}}
-            <div class="job-application" id="rejected-job-application">
+            <div class="job-application" id="rejected-job-application" draggable="true" ondragstart="onDragStart(event)">
                     <button type="submit" class="delete-job-application-btn" value="{{ID}}" onclick="showJobApplicationDeletionPopup(this)">X</button>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
