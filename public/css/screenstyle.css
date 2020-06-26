@@ -157,8 +157,9 @@ a:hover {
 
 .enlarged-job-application {
     display: none;
-    max-width: 500px;
-    max-height: 500px;
+    position: fixed;
+    height: 250px;
+    width: 250px;
     border: 2px solid white;
     color: white;
     z-index: 8;

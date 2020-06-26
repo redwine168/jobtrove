@@ -118,13 +118,31 @@ function onDrop(event) {
 function enlargeJobApplication(clickedDiv) {
     var position = $(clickedDiv).position();
     var backgroundColor = $(clickedDiv).css('background-color');
-    var companyName;
-    console.log($(clickedDiv.children()[0]))
+    // Get info from clicked job application div
+    // Div children:
+    // 0 - hidden paragraph containing job application ID
+    // 1 - company name
+    // 2 - job title
+    // 3 - date applied
+    var jobApplicationID = $(clickedDiv).children()[0].innerHTML;
+    var companyName = $(clickedDiv).children()[1].innerHTML;
+    var jobTitle = $(clickedDiv).children()[2].innerHTML;
+    var dateApplied = $(clickedDiv).children()[3].innerHTML;
     $("#enlarged-job-application").offset(position);
-    $("enlarged-job-application").css({
+    $(".delete-job-application-btn").val(jobApplicationID);
+    $("#enlarged-job-application-company-name").html(companyName);
+    $("#enlarged-job-application-job-title").html(jobTitle);
+    $("#enlarged-job-application-date-applied").html(dateApplied);
+    $("#enlarged-job-application").css({
         'display': 'block',
         'background-color': backgroundColor
     });
+}
+
+function hideEnlargedJobApplication() {
+    $("#enlarged-job-application").css({
+        'display': 'none',
+    })
 }
 
 
@@ -197,6 +215,7 @@ function validateNewJobApplication() {
 // Function for deleting a job application
 function deleteJobApplication(btn) {
     var jobApplicationID = $(btn).val();
+    console.log(jobApplicationID)
     $.ajax({
         type: 'POST',
         url: '/deleteJobApplication',
@@ -206,6 +225,7 @@ function deleteJobApplication(btn) {
         success: function(result) {
             //console.log(result.message);
             hideJobApplicationDeletionPopup();
+            hideEnlargedJobApplication();
             // Emit a homepage refresh request to get updated list of job applications
             socket.emit('homepage-refresh-request', {userID}, (error) => {
                 if (error) {
@@ -231,6 +251,7 @@ function updateJobApplicationColumn(jobApplicationID, destColumn) {
         destColumn = "Rejected"
     } else {
         console.log("Bad column name during drag and drop");
+        console.log("Column name: " + destColumn)
         goodToPost = false;
     }
     // POST if everything is okay
