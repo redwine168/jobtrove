@@ -142,6 +142,7 @@ app.post('/insertJobApplication', function(request, response) {
     var dateApplied = request.body.dateApplied;
     var userID = request.body.userID;
     var column = request.body.column;
+    var notes = request.body.notes
     // open db connection
     sql.connect(config, function (err) {
         if (err) console.log(err);
@@ -152,7 +153,8 @@ app.post('/insertJobApplication', function(request, response) {
         dbConnection.input('dateApplied', sql.VarChar, dateApplied);
         dbConnection.input('userID', sql.Int, userID);
         dbConnection.input('column', sql.VarChar, column);
-        var sql_insertJobApplication = 'INSERT INTO JobApplications(UserID,CompanyName,JobTitle,DateApplied,BoardColumn) VALUES (@userID,@companyName,@jobTitle,@dateApplied,@column)'
+        dbConnection.input('notes', sql.VarChar, notes);
+        var sql_insertJobApplication = 'INSERT INTO JobApplications(UserID,CompanyName,JobTitle,DateApplied,BoardColumn,Notes) VALUES (@userID,@companyName,@jobTitle,@dateApplied,@column,@notes)'
         dbConnection.query(sql_insertJobApplication).then(function(insertResults) {
             response.send({message: "Job Application created successfully!"});
         });
@@ -220,7 +222,6 @@ io.on('connection', (socket) => {
             dbConnection.input('userID', sql.Int, userID);
             var sql_getJobApplications = 'SELECT * FROM JobApplications WHERE UserID=@userID ORDER BY DateApplied DESC';
             dbConnection.query(sql_getJobApplications).then(function(results) {
-                socket.emit('jobApplications', results.recordset);
                 io.to(room).emit('jobApplications', results.recordset);
             })
         })

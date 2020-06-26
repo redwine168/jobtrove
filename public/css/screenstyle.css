@@ -117,6 +117,34 @@ a:hover {
     border: 2px solid white;
     border-radius: 25px;
     margin-bottom: 5px;
+    cursor: pointer;
+}
+
+#interested-job-application {
+    background: gold;
+}
+
+#applied-job-application {
+    background: black;
+}
+
+#accepted-job-application {
+    background: green;
+}
+
+#rejected-job-application {
+    background: red;
+}
+
+.enlarged-job-application {
+    display: none;
+    position: fixed;
+    width: 250px;
+    border: 2px solid white;
+    color: white;
+    text-align: center;
+    z-index: 8;
+    font-size: 12pt;
 }
 
 .delete-job-application-btn {
@@ -139,34 +167,8 @@ a:hover {
     z-index: 11;
 }
 
-#interested-job-application {
-    background: gold;
-}
-
-#applied-job-application {
-    background: black;
-}
-
-#accepted-job-application {
-    background: green;
-}
-
-#rejected-job-application {
-    background: red;
-}
-
-.enlarged-job-application {
-    display: none;
-    position: fixed;
-    height: 250px;
-    width: 250px;
-    border: 2px solid white;
-    color: white;
-    z-index: 8;
-}
-
 /* Button used to open the Create New Job form - fixed at the bottom of the page */
-.open-button {
+.new-job-application-btn {
   background-color: #555;
   color: white;
   width: 13%;
@@ -174,8 +176,8 @@ a:hover {
   border-radius: 10px;
 }
 
-/* The popup form - hidden by default */
-.form-popup {
+/* New job application - hidden by default */
+.new-job-application-form {
   display: none;
   position: fixed;
   border: 2px solid blue;
@@ -183,14 +185,14 @@ a:hover {
 }
 
 /* Add styles to the form container */
-.submission-form-container {
+.new-job-application-form-container {
   max-width: 300px;
   padding: 10px;
   background-color: white;
 }
 
 /* Full-width input fields */
-.submission-form-container input[type=text], .form-container input[type=password] {
+.new-job-application-form-container input[type=text], .form-container input[type=password] {
   width: 90%;
   padding: 15px;
   margin: 5px 0 22px 0;
@@ -199,13 +201,13 @@ a:hover {
 }
 
 /* When the inputs get focus, do something */
-.submission-form-container input[type=text]:focus, .form-container input[type=password]:focus {
+.new-job-application-form-container input[type=text]:focus, .form-container input[type=password]:focus {
   background-color: #ddd;
   outline: none;
 }
 
 /* Set a style for the submit/login button */
-.submission-form-container .btn {
+.new-job-application-form-container .btn {
   background-color: #4CAF50;
   color: white;
   padding: 16px 20px;
@@ -217,22 +219,29 @@ a:hover {
 }
 
 /* Add a red background color to the cancel button */
-.submission-form-container .cancel {
+.new-job-application-form-container .cancel {
   background-color: red;
 }
 
 /* Add some hover effects to buttons */
-.submission-form-container .btn:hover, .open-button:hover {
+.new-job-application-form-container .btn:hover, .open-button:hover {
   opacity: 1;
 }
 
-.submission-form-container select {
+.new-job-application-form-container select {
     width: 100%;
     padding: 5px;
     margin-bottom: 10px;
 }
 
-.submission-error-popup {
+.new-job-application-form .notes {
+    width: 100%;
+    background-color: #ddd;
+    outline: none;
+    border: none;
+}
+
+.bad-job-application-popup {
     display: none;
     position: fixed;
     max-width: 100px;
@@ -242,13 +251,13 @@ a:hover {
     text-align: center;
 }
 
-.submission-error-popup .submission-error-btn {
+.bad-job-application-popup .bad-job-application-btn {
     background-color: #4CAF50;
     color: white;
     width: 50%;
 }
 
-.submission-error-popup .submission-error-message {
+.bad-job-application-popup .bad-job-application-message {
     font-size: 10pt;
     color: white;
 }

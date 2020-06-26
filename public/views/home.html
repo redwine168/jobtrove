@@ -11,11 +11,10 @@
                 <p class="sidebarUsername"></p>
             </div>
             <div class="board">
-                <button class="open-button" onclick="openJobApplicationForm()">Add Job Application</button>
-                <div class="form-popup" id="job-application-popup-form">
-                    <form action="javascript:validateNewJobApplication()" class="submission-form-container">
-                        <h1>Add Job Application</h1>
-
+                <button class="new-job-application-btn" onclick="openNewJobApplicationForm()">Add Job Application</button>
+                <div class="new-job-application-form" id="new-job-application-form">
+                    <form action="javascript:validateNewJobApplication()" class="new-job-application-form-container">
+                        <h3>Add Job Application</h3>
                         <label for="columnSelection"><b>Column</b></label>
                         <select name="columnSelection" id="columnSelection">
                             <option value="Interested">Interested</option>
@@ -28,22 +27,25 @@
                         <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
                     
                         <label for="jobTitle"><b>Job Title</b></label>
-                        <input type="text" placeholder="Enter Job Title" name="jobTitle" autocapitalize="off" required>
+                        <input type="text" placeholder="Enter Job Title" name="jobTitle" autocomplete="off" required>
 
                         <label for="dateApplied"><b>Date Applied</b></label>
                         <input type="date" name="dateApplied">
+
+                        <label for="notes"><b>Notes</b></label>
+                        <textarea class="notes" maxlength="255" rows="4" cols="4"></textarea>
 
                         <input type="hidden" name="timeApplied">
                         <input type="hidden" name="userID" id="userID" required>
                     
                         <button type="submit" class="btn">Create</button>
-                        <button type="button" class="btn cancel" onclick="closeJobApplicationForm()">Cancel</button>
+                        <button type="button" class="btn cancel" onclick="closeNewJobApplicationForm()">Cancel</button>
                     </form>
                 </div>
 
-                <div class="submission-error-popup" id="bad-job-application-popup">
-                    <p class="submission-error-message" id="submission-error-message"></p>
-                    <button type="button" class="submission-error-btn" onclick="hideSubmissionErrorPopup()">OK</button>
+                <div class="bad-job-application-popup" id="bad-job-application-popup">
+                    <p class="bad-job-application-message" id="bad-job-application-message"></p>
+                    <button type="button" class="bad-job-application-btn" onclick="hideSubmissionErrorPopup()">OK</button>
                 </div>
 
                 <div class="delete-job-application-popup" id="delete-job-application-popup">
@@ -56,7 +58,8 @@
                     <h1 id="enlarged-job-application-company-name"></h1>
                     <h2 id="enlarged-job-application-job-title"></h2>
                     <h3 id="enlarged-job-application-date-applied"></h3>
-                    <button type="button" class="delete-job-application-btn" onclick="showJobApplicationDeletionPopup(this)">X</button>
+                    <p id="enlarged-job-application-notes"></p>
+                    <button type="button" class="delete-job-application-btn" onclick="showJobApplicationDeletionPopup(this)">Delete</button>
                     <button type="button" class="hide-enlarged-job-application-btn" onclick="hideEnlargedJobApplication(this)">Hide</button>
                 </div>
 
@@ -86,40 +89,44 @@
         <script id="interested-list-template" type="text/html">
             {{#interestedList}}
             <div class="job-application" id="interested-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</button>
+                <p hidden>{{ID}}</p>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
                 <p style="font-size:8pt;"></p>
+                <p hidden>{{Notes}}</p>
             </div>
             {{/interestedList}}
         </script>
         <script id="applied-list-template" type="text/html">
             {{#appliedList}}
             <div class="job-application" id="applied-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</button>
+                <p hidden>{{ID}}</p>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
                 <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
+                <p hidden>{{Notes}}</p>
             </div>
             {{/appliedList}}
         </script>
         <script id="accepted-list-template" type="text/html">
             {{#acceptedList}}
             <div class="job-application" id="accepted-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</button>
+                <p hidden>{{ID}}</p>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
                 <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
+                <p hidden>{{Notes}}</p>
             </div>
             {{/acceptedList}}
         </script>
         <script id="rejected-list-template" type="text/html">
             {{#rejectedList}}
             <div class="job-application" id="rejected-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</button>
+                <p hidden>{{ID}}</p>
                 <p>{{CompanyName}}</p>
                 <p style="font-size:10pt;">{{JobTitle}}</p>
                 <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
+                <p hidden>{{Notes}}</p>
             </div>
             {{/rejectedList}}
         </script>

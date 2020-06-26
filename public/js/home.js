@@ -4,20 +4,24 @@ userID = $("#userID").val();
 
 // Function for opening new job application form
 // Makes popup visible
-function openJobApplicationForm() {
-    document.getElementById("job-application-popup-form").style.display = "block";
+function openNewJobApplicationForm() {
+    $("#new-job-application-form").css({
+        'display': 'block'
+    })
 }
 
 
 // Function for closing new job application form
 // Resets form values and hides the popup
-function closeJobApplicationForm() {
+function closeNewJobApplicationForm() {
     var today = new Date();
     var currentDate = today.toISOString().slice(0,10);
     $('input[name="dateApplied"]').val(currentDate)
     $("input[name=companyName]").val("");
     $("input[name=jobTitle]").val("");
-    document.getElementById("job-application-popup-form").style.display = "none";
+    $("#new-job-application-form").css({
+        'display': 'none'
+    })
     hideSubmissionErrorPopup();
 }
 
@@ -56,14 +60,18 @@ function showSubmissionErrorPopup(inputWithError, errorMessage) {
     var position = inputWithError.position();
     $("#bad-job-application-popup").offset(position);
     $("#submission-error-message").html(errorMessage);
-    document.getElementById("bad-job-application-popup").style.display = "block";
+    $("#bad-job-application-popup").css({
+        'display': 'block'
+    })
 }
 
 
 // Function for hiding submission error popup
 function hideSubmissionErrorPopup() {
     $("#submission-error-message").html("")
-    document.getElementById("bad-job-application-popup").style.display = "none";
+    $("#bad-job-application-popup").css({
+        'display': 'none'
+    })
 }
 
 
@@ -71,12 +79,16 @@ function hideSubmissionErrorPopup() {
 function showJobApplicationDeletionPopup(btn) {
     $("#delete-job-application-popup").offset($(btn).position());
     $("#delete-job-application-btn-yes").val($(btn).val());
-    document.getElementById("delete-job-application-popup").style.display = "block";
+    $("#delete-job-application-popup").css({
+        'display': 'block'
+    })
 }
 
 // Function for hiding job application deletion popup
 function hideJobApplicationDeletionPopup() {
-    document.getElementById("delete-job-application-popup").style.display = "none";
+    $("#delete-job-application-popup").css({
+        'display': 'none'
+    })
 }
 
 
@@ -87,7 +99,7 @@ function hideJobApplicationDeletionPopup() {
 // Function for when a drag begins
 function onDragStart(event) {
     // Gets job application ID and its origin column, sets this data for transfer
-    const jobApplicationID = $(event.target).find("button").val();
+    const jobApplicationID = $(event.target).children()[0].innerHTML;
     const originColumn = $(event.target).parent()[0].id
     const dragData = {jobApplicationID: jobApplicationID, originColumn: originColumn}
     event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
@@ -124,15 +136,18 @@ function enlargeJobApplication(clickedDiv) {
     // 1 - company name
     // 2 - job title
     // 3 - date applied
+    // 4 - notes
     var jobApplicationID = $(clickedDiv).children()[0].innerHTML;
     var companyName = $(clickedDiv).children()[1].innerHTML;
     var jobTitle = $(clickedDiv).children()[2].innerHTML;
     var dateApplied = $(clickedDiv).children()[3].innerHTML;
+    var notes = $(clickedDiv).children()[4].innerHTML;
     $("#enlarged-job-application").offset(position);
     $(".delete-job-application-btn").val(jobApplicationID);
     $("#enlarged-job-application-company-name").html(companyName);
     $("#enlarged-job-application-job-title").html(jobTitle);
     $("#enlarged-job-application-date-applied").html(dateApplied);
+    $("#enlarged-job-application-notes").html(notes);
     $("#enlarged-job-application").css({
         'display': 'block',
         'background-color': backgroundColor
@@ -158,6 +173,7 @@ function validateNewJobApplication() {
     var jobTitle = $("input[name=jobTitle]").val();
     var dateApplied = $("input[name=dateApplied]").val();
     var userID = $("input[name=userID]").val();
+    var notes = $(".notes").val();
     var columnDropdown = document.getElementById("columnSelection");
     var column = columnDropdown.options[columnDropdown.selectedIndex].value;
     
@@ -194,11 +210,12 @@ function validateNewJobApplication() {
                 "jobTitle" : jobTitle,
                 "dateApplied": dateApplied,
                 "userID": userID,
-                "column": column
+                "column": column,
+                "notes": notes
             },
             success: function(result) {
                 //console.log(result.message);
-                closeJobApplicationForm();
+                closeNewJobApplicationForm();
                 // Emit a homepage refresh request to get updated list of job applications
                 socket.emit('homepage-refresh-request', {userID}, (error) => {
                     if (error) {
