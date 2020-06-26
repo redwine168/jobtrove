@@ -80,6 +80,10 @@ function hideJobApplicationDeletionPopup() {
 }
 
 
+// -----------------------------------------
+// ----- Job Application Drag and Drop -----
+// -----------------------------------------
+
 // Function for when a drag begins
 function onDragStart(event) {
     // Gets job application ID and its origin column, sets this data for transfer
@@ -107,6 +111,21 @@ function onDrop(event) {
     }
 }
 
+// --------------------------------------------
+// ----- Job Application Enlarge on Click -----
+// --------------------------------------------
+
+function enlargeJobApplication(clickedDiv) {
+    var position = $(clickedDiv).position();
+    var backgroundColor = $(clickedDiv).css('background-color');
+    var companyName;
+    console.log($(clickedDiv.children()[0]))
+    $("#enlarged-job-application").offset(position);
+    $("enlarged-job-application").css({
+        'display': 'block',
+        'background-color': backgroundColor
+    });
+}
 
 
 
