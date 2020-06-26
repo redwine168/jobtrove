@@ -27,6 +27,7 @@ window.onload = function() {
     var today = new Date();
     var currentDate = today.toISOString().slice(0,10);
     $('input[name="dateApplied"]').val(currentDate)
+
 }
 
 
@@ -50,6 +51,69 @@ $("#columnSelection").change(function() {
 })
 
 
+// Function for showing error popup for bad job application submission
+function showSubmissionErrorPopup(inputWithError, errorMessage) {
+    var position = inputWithError.position();
+    $("#bad-job-application-popup").offset(position);
+    $("#submission-error-message").html(errorMessage);
+    document.getElementById("bad-job-application-popup").style.display = "block";
+}
+
+
+// Function for hiding submission error popup
+function hideSubmissionErrorPopup() {
+    $("#submission-error-message").html("")
+    document.getElementById("bad-job-application-popup").style.display = "none";
+}
+
+
+// Function for showing job application deletion popup
+function showJobApplicationDeletionPopup(btn) {
+    $("#delete-job-application-popup").offset($(btn).position());
+    $("#delete-job-application-btn-yes").val($(btn).val());
+    document.getElementById("delete-job-application-popup").style.display = "block";
+}
+
+// Function for hiding job application deletion popup
+function hideJobApplicationDeletionPopup() {
+    document.getElementById("delete-job-application-popup").style.display = "none";
+}
+
+
+// Function for when a drag begins
+function onDragStart(event) {
+    // Gets job application ID and its origin column, sets this data for transfer
+    const jobApplicationID = $(event.target).find("button").val();
+    const originColumn = $(event.target).parent()[0].id
+    const dragData = {jobApplicationID: jobApplicationID, originColumn: originColumn}
+    event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+}
+
+// Function for drag overs, prevents default
+function onDragOver(event) {
+    event.preventDefault();
+}
+
+// Function for when a drop occurs
+function onDrop(event) {
+    // Get the column that the drop occurred in, as well as the data from the initial drag event
+    const dragData = JSON.parse(event.dataTransfer.getData('text'));
+    const jobApplicationID = dragData.jobApplicationID;
+    const originColumn = dragData.originColumn;
+    const destColumn = $(event.target)[0].id;
+    // If application dragged to column different from where it started
+    if (originColumn != destColumn) {
+        updateJobApplicationColumn(jobApplicationID, destColumn);
+    }
+}
+
+
+
+
+// -----------------------------
+// ----- Server POST calls -----
+// -----------------------------
+
 // Function to validate new job application when submitted
 function validateNewJobApplication() {
     // Get form values
@@ -70,6 +134,20 @@ function validateNewJobApplication() {
             return showSubmissionErrorPopup($("input[name=dateApplied]"), "Cannot select date in the future!");
         }
     }
+    // If date is empty (which happens when Interested column is selected), put in today's date
+    if (dateApplied == "") {
+        dateApplied = new Date();
+        // Set time to 12:00:00:00
+        dateApplied.setHours(12, 0, 0, 0);
+    }
+    // Otherwise, we just need to make sure hours set to 12 (account for time zone shift from UTC)
+    else {
+        dateApplied = new Date(dateApplied + " 12:00:00");
+    }
+    // Do a final shift of time to make sure dates are stored in database at 12:00:00 UTC
+    dateApplied = new Date(dateApplied.getTime() - dateApplied.getTimezoneOffset() * 60000);
+    // Put date in format good for database
+    dateApplied = dateApplied.toISOString();
     if (goodToPost) {
         $.ajax({
             type: 'POST',
@@ -97,33 +175,7 @@ function validateNewJobApplication() {
 }
 
 
-// Function for showing error popup for bad job application submission
-function showSubmissionErrorPopup(inputWithError, errorMessage) {
-    var position = inputWithError.position();
-    $("#bad-job-application-popup").offset(position);
-    $("#submission-error-message").html(errorMessage);
-    document.getElementById("bad-job-application-popup").style.display = "block";
-}
-
-
-// Function for hiding submission error popup
-function hideSubmissionErrorPopup() {
-    $("#submission-error-message").html("")
-    document.getElementById("bad-job-application-popup").style.display = "none";
-}
-
-
-// Function for showing job application deletion popup
-function showJobApplicationDeletionPopup(btn) {
-    $("#delete-job-application-popup").offset($(btn).position());
-    $("#delete-job-application-btn-yes").val($(btn).val());
-    document.getElementById("delete-job-application-popup").style.display = "block";
-}
-
-function hideJobApplicationDeletionPopup() {
-    document.getElementById("delete-job-application-popup").style.display = "none";
-}
-
+// Function for deleting a job application
 function deleteJobApplication(btn) {
     var jobApplicationID = $(btn).val();
     $.ajax({
@@ -144,32 +196,6 @@ function deleteJobApplication(btn) {
             })
         }
     })
-}
-
-
-// Drag and drop
-function onDragStart(event) {
-    console.log("dragging");
-    const jobApplicationID = $(event.target).find("button").val();
-    const originColumn = $(event.target).parent()[0].id
-    const dragData = {jobApplicationID: jobApplicationID, originColumn: originColumn}
-    event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
-}
-
-function onDragOver(event) {
-    event.preventDefault();
-}
-
-function onDrop(event) {
-    console.log("dropped!")
-    const dragData = JSON.parse(event.dataTransfer.getData('text'));
-    const jobApplicationID = dragData.jobApplicationID;
-    const originColumn = dragData.originColumn;
-    const destColumn = $(event.target)[0].id;
-    // If application dragged to column different from where it started
-    if (originColumn != destColumn) {
-        updateJobApplicationColumn(jobApplicationID, destColumn);
-    }
 }
 
 
@@ -213,9 +239,12 @@ function updateJobApplicationColumn(jobApplicationID, destColumn) {
 
 
 
-// Socket events
 
-// When the server sends list of job applications for the user
+// -------------------------
+// ----- Socket events -----
+// -------------------------
+
+// When the server sends list of job applications to the user
 socket.on('jobApplications', (jobApplications) => {
     var interestedList = [];
     var appliedList = [];
@@ -268,7 +297,6 @@ socket.on('jobApplications', (jobApplications) => {
     })
     rejectedColumn.innerHTML = rejecetedHtml;
 })
-
 
 
 // When a user enters their home page, sends user info to server
