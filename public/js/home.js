@@ -19,6 +19,7 @@ function closeNewJobApplicationForm() {
     $('input[name="dateApplied"]').val(currentDate)
     $("input[name=companyName]").val("");
     $("input[name=jobTitle]").val("");
+    $(".notes").val("");
     $("#new-job-application-form").css({
         'display': 'none'
     })
@@ -59,7 +60,7 @@ $("#columnSelection").change(function() {
 function showSubmissionErrorPopup(inputWithError, errorMessage) {
     var position = inputWithError.position();
     $("#bad-job-application-popup").offset(position);
-    $("#submission-error-message").html(errorMessage);
+    $("#bad-job-application-message").html(errorMessage);
     $("#bad-job-application-popup").css({
         'display': 'block'
     })
@@ -103,6 +104,7 @@ function onDragStart(event) {
     const originColumn = $(event.target).parent()[0].id
     const dragData = {jobApplicationID: jobApplicationID, originColumn: originColumn}
     event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+
 }
 
 // Function for drag overs, prevents default
