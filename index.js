@@ -218,7 +218,7 @@ io.on('connection', (socket) => {
             // Initialize connection and parameters
             var dbConnection = new sql.Request();
             dbConnection.input('userID', sql.Int, userID);
-            var sql_getJobApplications = 'SELECT * FROM JobApplications WHERE UserID=@userID';
+            var sql_getJobApplications = 'SELECT * FROM JobApplications WHERE UserID=@userID ORDER BY DateApplied DESC';
             dbConnection.query(sql_getJobApplications).then(function(results) {
                 socket.emit('jobApplications', results.recordset);
                 io.to(room).emit('jobApplications', results.recordset);
