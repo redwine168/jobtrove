@@ -40,7 +40,7 @@ var config = {
 // GET for login page
 app.get('/', function(request, response) {
     console.log("Request for login page");
-    response.render(publicDirectoryPath + 'views/login.html');
+    response.render(publicDirectoryPath + 'views/home.html');
 })
 
 
@@ -52,12 +52,12 @@ app.get('/createAccount', function(request, response) {
 
 
 // GET for home
-app.get('/home', function(request, response) {
+app.get('/board', function(request, response) {
     var username = request.session.username;
     var userID = request.session.userID;
 	if (request.session.loggedin) {
         response.cookie = {username: request.session.username}
-		response.render(publicDirectoryPath + 'views/home.html', {username: username, userID: userID});
+		response.render(publicDirectoryPath + 'views/board.html', {username: username, userID: userID});
 	} else {
 		response.send('Please login to view this page!');
 	}
@@ -80,7 +80,7 @@ app.post('/auth', function(request, response) {
                 request.session.loggedin = true;
                 request.session.username = username;
                 request.session.userID = results.recordset[0]["ID"];
-                response.send({redirect: '/home'});
+                response.send({redirect: '/board'});
             } else {
                 response.send({message: "Incorrect Username and/or Password!"});
             }			
