@@ -1,0 +1,14 @@
+
+.user-profile-username {
+    color:red;
+}
+
+.user-profile-img {
+    float: left;
+    max-height: none;
+    height: 500px;
+}
+
+.user-profile-info-item {
+    color: black;
+}

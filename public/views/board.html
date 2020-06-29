@@ -5,11 +5,26 @@
         <meta charset="utf-8"/>
         <link rel="icon" href="/img/trove.png">
         <link rel="stylesheet" href="/css/screenstyle.css">
+        <link rel="stylesheet" href="/css/board_screenstyle.css">
     </head>
     <body>
-        <div class="home-container">
-            <div class="home-sidebar">
-                <p class="sidebarUsername"></p>
+        <div class="board-container">
+            <div class="nav-bar">
+                <div class="nav-bar-user-info" onclick="showUserInfoDropdown()">
+                    <img src="" class="nav-bar-profile-img">
+                    <p class="nav-bar-username" id="nav-bar-username"></p>
+                    <div class="nav-bar-user-info-dropdown">
+                        <img src="" class="nav-bar-profile-img" style="float:none;display:block;">
+                        <p class="nav-bar-username" style="float:none;display:block;"></p>
+                        <button type="button" class="user-info-dropdown-btn" onclick="navToUserProfilePage()">Edit Profile</button>
+                    </div>
+                </div>
+                <div class="nav-bar-button">
+                    Applications Board
+                </div>
+                <div class="nav-bar-button">
+                    To-Do List
+                </div>
             </div>
             <div class="board">
                 <button class="new-job-application-btn" onclick="openNewJobApplicationForm()">Add Job Application</button>
@@ -138,8 +153,11 @@
         <script>
                 var username = "<%= username %>";
                 var userID = "<%= userID %>";
-                $(".sidebarUsername").html(username);
-                $('#userID').val(userID)
+                var imagePath = "<%= imagePath %>";
+                $(".nav-bar-username").html(username);
+                $("#nav-bar-username").html(username + " &#9660");
+                $('#userID').val(userID);
+                $('.nav-bar-profile-img').attr("src", imagePath);
         </script>
         
         <script src="../js/board.js"></script>

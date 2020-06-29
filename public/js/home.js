@@ -30,7 +30,11 @@ function closeLoginFormPopup() {
     $("input[name=login-password]").val("");
     $("input[name=create-account-username]").val("");
     $("input[name=create-account-password]").val("");
+    $("input[name=create-account-first-name]").val("");
+    $("input[name=create-account-last-name]").val("");
     $("input[name=create-account-email]").val("");
+    $("#login-message").text("");
+    $("#create-account-message").text("");
     $("#login-form-popup").css({
         'display': 'none'
     })
@@ -57,6 +61,8 @@ function validateLogin() {
 function createAccount() {
     username = $("input[name=create-account-username]").val();
     password = $("input[name=create-account-password]").val();
+    firstName = $("input[name=create-account-first-name]").val();
+    lastName = $("input[name=create-account-last-name]").val();
     email = $("input[name=create-account-email]").val();
     $.ajax({
         type: 'POST',
@@ -64,6 +70,8 @@ function createAccount() {
         data: {
             "username" : username,
             "password" : password,
+            "firstName" : firstName,
+            "lastName" : lastName,
             "email" : email
         },
         success: function(result) {

@@ -37,32 +37,98 @@ var config = {
 
 
 
-// GET for login page
+// ----------------
+// ----- GETS -----
+// ----------------
+
+// GET for home page (landing page)
 app.get('/', function(request, response) {
     console.log("Request for login page");
     response.render(publicDirectoryPath + 'views/home.html');
 })
 
 
-// GET for account creation page page
-app.get('/createAccount', function(request, response) {
-    console.log("Request for account creation page");
-    response.render(publicDirectoryPath + 'views/createAccount.html');
-});
-
-
-// GET for home
+// GET for board page
 app.get('/board', function(request, response) {
     var username = request.session.username;
     var userID = request.session.userID;
 	if (request.session.loggedin) {
-        response.cookie = {username: request.session.username}
-		response.render(publicDirectoryPath + 'views/board.html', {username: username, userID: userID});
+        // Get path for profile image
+        sql.connect(config, function(err) {
+            if (err) console.log(err);
+            var dbConnection = new sql.Request();
+            dbConnection.input('userID', sql.Int, userID);
+            var query_sql = 'SELECT * FROM ProfileImagePaths WHERE UserID=@userID';
+            dbConnection.query(query_sql).then(function(results) {
+                if (results.recordset.length > 0) {
+                    var imagePath = results.recordset[0]["ImagePath"];
+                    response.render(publicDirectoryPath + 'views/board.html', {
+                        username: username,
+                        userID: userID,
+                        imagePath: imagePath
+                    });
+                }
+                else {
+                    console.log("Could not retrieve image path.  Sending default path.");
+                    var imagePath = "/img/user_imgs/default.png";
+                    response.render(publicDirectoryPath + 'views/board.html', {
+                        username: username,
+                        userID: userID,
+                        imagePath: imagePath
+                    });
+                }
+            })
+        })
 	} else {
 		response.send('Please login to view this page!');
 	}
-	response.end();
 });
+
+
+// GET for profile page
+app.get('/profile', function(request, response) {
+    var userID = request.session.userID;
+    if (request.session.loggedin) {
+        // Get data needed for this page
+        sql.connect(config, function(err) {
+            if (err) console.log(err);
+            var dbConnection = new sql.Request();
+            dbConnection.input('userID', sql.Int, userID);
+            var query_sql = 'SELECT * FROM Users u join ProfileImagePaths pip on u.ID=@userID and pip.UserID=@userID';
+            dbConnection.query(query_sql).then(function(results) {
+                if (results.recordset.length > 0) {
+                    var username = results.recordset[0]["Username"];
+                    var firstName = results.recordset[0]["FirstName"];
+                    var lastName = results.recordset[0]["LastName"];
+                    var email = results.recordset[0]["Email"];
+                    var imagePath = results.recordset[0]["ImagePath"];
+                    response.render(publicDirectoryPath + 'views/profile.html', {
+                        username: username,
+                        firstName: firstName,
+                        lastName: lastName,
+                        email: email,
+                        userID: userID,
+                        imagePath: imagePath
+                    });
+                } else {
+                    console.log("Could not retrieve user data. Help plz");
+                }
+            })
+        })
+    } else {
+        response.send('Please login to view this page!');
+    }
+});
+
+
+
+
+
+// -----------------
+// ----- POSTS -----
+// -----------------
+
+
 
 
 // POST method for authorizing login attempt
@@ -74,7 +140,7 @@ app.post('/auth', function(request, response) {
         var dbConnection = new sql.Request();
         dbConnection.input('username', sql.VarChar, username);
         dbConnection.input('password', sql.VarChar, password);
-        var query_sql = 'SELECT * FROM Users WHERE username = @username AND password = @password';
+        var query_sql = 'SELECT * FROM Users WHERE Username = @username AND Password = @password';
         dbConnection.query(query_sql).then(function(results) {
             if (results.recordset.length > 0) {
                 request.session.loggedin = true;
@@ -94,6 +160,8 @@ app.post('/insertUser', function(request, response) {
     // Get input account info
     var username = request.body.username;
     var password = request.body.password;
+    var firstName = request.body.firstName;
+    var lastName = request.body.lastName;
     var email = request.body.email;
     // open db connection
     sql.connect(config, function (err) {
@@ -102,22 +170,32 @@ app.post('/insertUser', function(request, response) {
         var dbConnection = new sql.Request();
         dbConnection.input('username', sql.VarChar, username);
         dbConnection.input('password', sql.VarChar, password);
+        dbConnection.input('firstName', sql.VarChar, firstName);
+        dbConnection.input('lastName', sql.VarChar, lastName);
         dbConnection.input('email', sql.VarChar, email);
 
         // First, look to see if this username is in use
-        var sql_checkUsernameInUse = 'SELECT * FROM Users WHERE username = @username';
+        var sql_checkUsernameInUse = 'SELECT * FROM Users WHERE Username = @username';
         dbConnection.query(sql_checkUsernameInUse).then(function(usernameResults) {
             // If no results, username is available
             if (usernameResults.recordset.length == 0) {
                 // Next, check if email is in use
-                var sql_checkEmailInUse = 'SELECT * FROM Users WHERE email = @email';
+                var sql_checkEmailInUse = 'SELECT * FROM Users WHERE Email = @email';
                 dbConnection.query(sql_checkEmailInUse).then(function(emailResults) {
                     // If no results, email is not assigned to a different account
                     if (emailResults.recordset.length == 0) {
                         // And we can insert new account into table
-                        var sql_insertUser = 'INSERT INTO Users(username,password,email) VALUES(@username,@password,@email)'
+                        var sql_insertUser = 'INSERT INTO Users(Username,Password,FirstName,LastName,Email) VALUES(@username,@password,@firstName,@lastName,@email); SELECT SCOPE_IDENTITY() AS ID'
                         dbConnection.query(sql_insertUser).then(function(insertResults) {
-                            response.send({message: "Account created successfully!"});
+                            // Add entry to ProfileImagePaths, defaulted to the default image
+                            var userID = insertResults.recordset[0]["ID"];
+                            dbConnection.input('userID', sql.Int, userID);
+                            dbConnection.input('imagePath', sql.VarChar, '/img/user_imgs/default.png');
+                            console.log("Created user " + userID);
+                            var sql_insertProfileImagePath = 'INSERT INTO ProfileImagePaths(UserID,ImagePath) VALUES (@userID,@imagePath)';
+                            dbConnection.query(sql_insertProfileImagePath).then(function(insertResultsTwo) {
+                                response.send({message: "Account created successfully!"});
+                            })
                         });
                     }
                     // If results, email is associated to another account
@@ -196,6 +274,14 @@ app.post('/updateJobApplicationColumn', function(request, response) {
         });
     })
 });
+
+
+app.post('/navToUserProfilePage', function(request, response) {
+    var userID = request.body.userID;
+    request.session.loggin = true;
+    request.session.userID = userID;
+    response.send({redirect: '/profile'});
+})
 
 
 

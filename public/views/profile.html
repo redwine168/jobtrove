@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Trove</title>
+        <meta charset="utf-8"/>
+        <link rel="icon" href="/img/trove.png">
+        <link rel="stylesheet" href="/css/screenstyle.css">
+        <link rel="stylesheet" href="/css/profile_screenstyle.css">
+    </head>
+    <body>
+        <div class="nav-bar">
+            <div class="nav-bar-user-info" onclick="showUserInfoDropdown()">
+                <img src="" class="nav-bar-profile-img">
+                <p class="nav-bar-username" id="nav-bar-username"></p>
+                <div class="nav-bar-user-info-dropdown">
+                    <img src="" class="nav-bar-profile-img" style="float:none;display:block;">
+                    <p class="nav-bar-username" style="float:none;display:block;"></p>
+                    <button type="button" class="user-info-dropdown-btn" onclick="navToUserProfilePage()">Edit Profile</button>
+                </div>
+            </div>
+            <div class="nav-bar-button">
+                Applications Board
+            </div>
+            <div class="nav-bar-button">
+                To-Do List
+            </div>
+        </div>
+
+        <h1 class="user-profile-username"></h1>
+        <img src="" class="user-profile-img" style="height:100px">
+        <h2 class="user-profile-info-item" id="user-profile-first-name"></h2>
+        <h2 class="user-profile-info-item" id="user-profile-last-name"></h2>
+        <h2 class="user-profile-info-item" id="user-profile-email"></h2>
+
+        <input type="hidden" id="userID"></input>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+                var username = "<%= username %>";
+                var firstName = "<%= firstName %>";
+                var lastName = "<%= lastName %>";
+                var email = "<%= email %>";
+                var userID = "<%= userID %>";
+                var imagePath = "<%= imagePath %>";
+                $('.nav-bar-profile-img').attr("src", imagePath);
+                $(".nav-bar-username").html(username + " &#9660");
+                $('.userID').val(userID);
+                $('.user-profile-username').html(username);
+                $('.user-profile-img').attr("src", imagePath);
+                $('#user-profile-first-name').html(firstName);
+                $('#user-profile-last-name').html(lastName);
+                $('#user-profile-email').html(email);
+        </script>
+    </body>
+</html>

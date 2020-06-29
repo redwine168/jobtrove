@@ -2,6 +2,28 @@ var socket = io();
 
 userID = $("#userID").val();
 
+
+// Function for toggling showing user info dropdown in nav bar on click of div
+function showUserInfoDropdown() {
+    console.log("hi")
+    $(".nav-bar-user-info-dropdown").toggleClass("nav-bar-user-info-dropdown-show");
+}
+
+// Function for closing user info dropdown if click anywhere else in document
+window.onclick = function(event) {
+    if (!event.target.matches('.nav-bar-user-info')) {
+        var dropdowns = document.getElementsByClassName("nav-bar-user-info-dropdown");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('nav-bar-user-info-dropdown-show')) {
+                openDropdown.classList.remove('nav-bar-user-info-dropdown-show');
+            }
+        }
+    }
+}
+
+
 // Function for opening new job application form
 // Makes popup visible
 function openNewJobApplicationForm() {
@@ -27,12 +49,12 @@ function closeNewJobApplicationForm() {
 }
 
 
-// Function on window load -> update current date field of new job application form
+// Function on window load
 window.onload = function() {
+    // update current date field of new job application form
     var today = new Date();
     var currentDate = today.toISOString().slice(0,10);
     $('input[name="dateApplied"]').val(currentDate)
-
 }
 
 
@@ -167,6 +189,24 @@ function hideEnlargedJobApplication() {
 // -----------------------------
 // ----- Server POST calls -----
 // -----------------------------
+
+
+// Function for navigation to User Profile Page
+function navToUserProfilePage() {
+    $.ajax({
+        type: 'POST',
+        url: '/navToUserProfilePage',
+        data: {
+            "userID": userID
+        },
+        success: function(result) {
+            if (typeof result.redirect == 'string') {
+                window.location = result.redirect
+            }
+        }
+    })
+}
+
 
 // Function to validate new job application when submitted
 function validateNewJobApplication() {

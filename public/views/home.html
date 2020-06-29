@@ -5,6 +5,7 @@
         <meta charset="utf-8"/>
         <link rel="icon" href="/img/trove.png">
         <link rel="stylesheet" href="/css/screenstyle.css">
+        <link rel="stylesheet" href="/css/home_screenstyle.css">
     </head>
     <body>
         <div class="home-container">
@@ -33,6 +34,8 @@
                         <h3>Create Trove Account</h3>
                         <input type="text" name="create-account-username" placeholder="Username" minlength="2" maxlength="16" autocomplete="off" required>
                         <input type="password" name="create-account-password" placeholder="Password" minlength="2" maxlength="20" autocomplete="off" required>
+                        <input type="text" name="create-account-first-name" placeholder="First name" minlength="1" maxlength="20" autocomplete="off" required>
+                        <input type="text" name="create-account-last-name" placeholder="Last name" minlength="1" maxlength="20" autocomplete="off" required>
                         <input type="email" name="create-account-email" placeholder="Email address" maxlength="30" autocomplete="off" required>
                         <input type="submit" value="Create">
                         <button type="button" onclick="closeLoginFormPopup()">Cancel</button>
