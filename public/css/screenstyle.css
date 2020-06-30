@@ -1,8 +1,7 @@
 
 body {
+    padding-top: 3.5rem;
     font-family: Tahoma, Geneva, sans-serif;
-    font-size: 14pt;
-    margin: 3em;
     color: #323aa8;
     background: #baf7f0;
 }
@@ -26,6 +25,7 @@ a {
 a:hover {
     color: #33a36d;
 }
+
 
 .nav-bar {
     top: 0;

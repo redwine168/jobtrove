@@ -10,41 +10,60 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     </head>
     <body>
-        <div class="home-container">
-            <div class="home-left-div">
-                <img src="/img/trove.png" alt="logo" class="home-logo">
-                <h1 style="color:rgb(235, 200, 6);">
-                    Helping make the world a better place
-                </h1>
+        <div class="container-fluid">
+
+            <div class="jumbotron">
+                <div class="container">
+                    <h1 class="display-3">Welcome to Trove</h1>
+                    <p>
+                        Trove is a tool designed to make applying for jobs a little less overwhelming.
+                        Designed with the sanity of job applicants in mind, Trove allows users to take control
+                        of their job application process.
+                    </p>
+                    <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+                </div>
             </div>
 
-            <div class="home-right-div">
-                <h3>Existing user?</h3>
-                <button id="open-login-form-btn" onclick="openLoginFormPopup(this)">Log In</button>
-                <h3>New to Trove?</h3>
-                <button id="open-create-account-form-btn" onclick="openLoginFormPopup(this)">Create Account</button>
-                <div class="login-form-popup" id="login-form-popup">
-                    <form action="javascript:validateLogin()" class="login-form">
-                        <h3>Sign In</h3>
-                        <input type="text" name="login-username" placeholder="Username" maxlength="16" minlength="2" autocomplete="off" required>
-                        <input type="password" name="login-password" placeholder="Password" maxlength="20" minlength="2" autocomplete="off" required>
-                        <input type="submit" value="Sign In">
-                        <button type="button" onclick="closeLoginFormPopup()">Cancel</button>
-                        <h3 id="login-message"></h3>
-                    </form>
-                    <form action="javascript:createAccount()" class="create-account-form">
-                        <h3>Create Trove Account</h3>
-                        <input type="text" name="create-account-username" placeholder="Username" minlength="2" maxlength="16" autocomplete="off" required>
-                        <input type="password" name="create-account-password" placeholder="Password" minlength="2" maxlength="20" autocomplete="off" required>
-                        <input type="text" name="create-account-first-name" placeholder="First name" minlength="1" maxlength="20" autocomplete="off" required>
-                        <input type="text" name="create-account-last-name" placeholder="Last name" minlength="1" maxlength="20" autocomplete="off" required>
-                        <input type="email" name="create-account-email" placeholder="Email address" maxlength="30" autocomplete="off" required>
-                        <input type="submit" value="Create">
-                        <button type="button" onclick="closeLoginFormPopup()">Cancel</button>
-                        <h3 id="create-account-message"></h3>
-                    </form>
-                </div>
-                <div class="create-account-form-popup" id="create-account-form-popup">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h2>Read about us!</h2>
+                        <p>See what other users have to say about their experience with Trove.</p>
+                        <p><a class="btn btn-primary" href="#" role="button">See Trove in the media &raquo;</a></p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h2>Contact us!</h2>
+                        <p>Have questions or feedback? Reach out to the Trove team.</p>
+                        <p><a class="btn btn-primary" href="#" role="button">Contact Us &raquo;</a></p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h2>Existing user?</h2>
+                        <p>Sign in to Trove to continue managing your job applications.</p>
+                        <p><a class="btn btn-primary" id="open-login-form-btn" role="button" onclick="openLoginFormPopup(this)">Sign In &raquo;</a></p>
+                        <div class="login-form-popup" id="login-form-popup">
+                            <form action="javascript:validateLogin()" class="login-form">
+                                <h3>Sign In</h3>
+                                <input type="text" name="login-username" placeholder="Username" maxlength="16" minlength="2" autocomplete="off" required>
+                                <input type="password" name="login-password" placeholder="Password" maxlength="20" minlength="2" autocomplete="off" required>
+                                <input type="submit" value="Sign In">
+                                <button type="button" onclick="closeLoginFormPopup()">Cancel</button>
+                                <a class="btn btn-primary" id="open-create-account-form-btn" role="button" onclick="openLoginFormPopup(this)">Create Account &raquo;</a>
+                                <h3 id="login-message"></h3>
+                            </form>
+                            <form action="javascript:createAccount()" class="create-account-form">
+                                <h3>Create Trove Account</h3>
+                                <input type="text" name="create-account-username" placeholder="Username" minlength="2" maxlength="16" autocomplete="off" required>
+                                <input type="password" name="create-account-password" placeholder="Password" minlength="2" maxlength="20" autocomplete="off" required>
+                                <input type="text" name="create-account-first-name" placeholder="First name" minlength="1" maxlength="20" autocomplete="off" required>
+                                <input type="text" name="create-account-last-name" placeholder="Last name" minlength="1" maxlength="20" autocomplete="off" required>
+                                <input type="email" name="create-account-email" placeholder="Email address" maxlength="30" autocomplete="off" required>
+                                <input type="submit" value="Create">
+                                <button type="button" onclick="closeLoginFormPopup()">Cancel</button>
+                                <a class="btn btn-primary" id="open-login-form-btn" role="button" onclick="openLoginFormPopup(this)">Sign In &raquo;</a>
+                                <h3 id="create-account-message"></h3>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
