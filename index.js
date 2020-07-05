@@ -278,10 +278,22 @@ app.post('/updateJobApplicationColumn', function(request, response) {
 
 app.post('/navToUserProfilePage', function(request, response) {
     var userID = request.body.userID;
-    request.session.loggin = true;
+    request.session.loggedin = true;
     request.session.userID = userID;
     response.send({redirect: '/profile'});
 })
+
+
+app.post('/navToBoardPage', function(request, response) {
+    var userID = request.body.userID;
+    var username = request.body.username;
+    request.session.loggedin = true;
+    request.session.userID = userID;
+    request.session.username = username;
+    response.send({redirect: '/board'});
+})
+
+
 
 
 

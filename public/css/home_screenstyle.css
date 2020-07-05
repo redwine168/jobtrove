@@ -1,10 +1,4 @@
 
-.home-logo {
-    width: 35%;
-    height: 35%;
-    margin-top: 20%;
-}
-
 .login-form-popup {
     display: none;
     position: fixed;

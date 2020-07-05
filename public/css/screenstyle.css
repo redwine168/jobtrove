@@ -1,9 +1,7 @@
 
 body {
-    padding-top: 3.5rem;
+    color: rgb(194, 194, 194);
     font-family: Tahoma, Geneva, sans-serif;
-    color: #323aa8;
-    background: #baf7f0;
 }
 
 h1 {
@@ -18,85 +16,13 @@ h3 {
     text-align: center;
 }
 
-a {
-    color: #206644;
+
+.navbar-btn {
+    margin-left: 10px;
 }
 
-a:hover {
-    color: #33a36d;
+.btn:focus {
+    color: #fff;
 }
 
 
-.nav-bar {
-    top: 0;
-    height: 50px;
-    width: 100%;
-    margin-bottom: 20px;
-    background-color: darkblue;
-    border: 1px solid white;
-    border-radius: 15px;
-    color: white;
-    border-radius: 15px;
-}
-
-.nav-bar-user-info {
-    float: left;
-    background-color: rgb(7, 4, 43);
-    height: 100%;
-    border: 2px solid white;
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.nav-bar-user-info-dropdown {
-    display: none;
-    position: absolute;
-    background-color: rgb(7, 4, 43);
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    border: 2px solid white;
-    border-radius: 15px;
-    text-align: center;
-}
-
-.nav-bar-user-info-dropdown-show {
-    display: block;
-}
-
-.user-info-dropdown-btn {
-    background-color: rgb(7, 4, 43);
-    color: white;
-    border: 1px solid white;
-    border-radius: 15px;
-    margin-bottom: 5px;
-}
-
-.nav-bar-profile-img {
-    float: left;
-    height: 95%;
-    max-height: 100px;
-    border: 1px solid black;
-    border-radius: 15px;
-}
-
-.nav-bar-username {
-    float: left;
-    padding: 5px;
-    text-align: center;
-    height: 100%;
-}
-
-.nav-bar-button {
-    float: left;
-    width: 15%;
-    padding-left: 15px;
-    padding-right: 15px;
-    margin-left: 40px;
-    background-color: rgb(7, 4, 43);
-    height: 100%;
-    line-height: 50px;
-    text-align: center;
-    vertical-align: middle;
-    border: 2px solid white;
-    border-radius: 20px;
-    cursor: pointer;
-}

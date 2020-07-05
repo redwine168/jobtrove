@@ -7,62 +7,28 @@
         <link rel="icon" href="/img/trove.png">
         <link rel="stylesheet" href="/css/screenstyle.css">
         <link rel="stylesheet" href="/css/board_screenstyle.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     </head>
-    <body>
-        
-
-        <div class="board-container">
-            <div class="nav-bar">
-                <div class="nav-bar-user-info" onclick="showUserInfoDropdown()">
-                    <img src="" class="nav-bar-profile-img">
-                    <p class="nav-bar-username" id="nav-bar-username"></p>
-                    <div class="nav-bar-user-info-dropdown">
-                        <img src="" class="nav-bar-profile-img" style="float:none;display:block;">
-                        <p class="nav-bar-username" style="float:none;display:block;"></p>
-                        <button type="button" class="user-info-dropdown-btn" onclick="navToUserProfilePage()">Edit Profile</button>
-                    </div>
-                </div>
-                <div class="nav-bar-button">
-                    Applications Board
-                </div>
-                <div class="nav-bar-button">
-                    To-Do List
+    <body style="background-color:rgb(220, 220, 220);">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom:20px">
+            <a class="navbar-brand" href="/">
+                <img src="/img/trove.png" width="30" height="30" style="display:inline">
+                Trove
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-info dropdown-toggle navbar-btn" type="button" id="username-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="dropdown-menu" aria-labelledby="username-dropdown-button">
+                    <a class="dropdown-item" style="cursor:pointer;" onclick="navToUserProfilePage()">Edit Profile</a>
+                    <a class="dropdown-item" href="#">Sign Out</a>
                 </div>
             </div>
-            <div class="board">
-                <button class="new-job-application-btn" onclick="openNewJobApplicationForm()">Add Job Application</button>
-                <div class="new-job-application-form" id="new-job-application-form">
-                    <form action="javascript:validateNewJobApplication()" class="new-job-application-form-container">
-                        <h3>Add Job Application</h3>
-                        <label for="columnSelection"><b>Column</b></label>
-                        <select name="columnSelection" id="columnSelection">
-                            <option value="Interested">Interested</option>
-                            <option value="Applied" selected>Applied</option>
-                            <option value="Accepted">Accepted</option>
-                            <option value="Rejected">Rejected</option>
-                        </select>
-                    
-                        <label for="companyName"><b>Company Name</b></label>
-                        <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
-                    
-                        <label for="jobTitle"><b>Job Title</b></label>
-                        <input type="text" placeholder="Enter Job Title" name="jobTitle" autocomplete="off" required>
+            <button class="btn btn-info navbar-btn" type="button" onclick="navToBoardPage()">Job App Board</button>
+            <button class="btn btn-info navbar-btn" type="button">To-Do List</button>
+        </nav>
 
-                        <label for="dateApplied"><b>Date Applied</b></label>
-                        <input type="date" name="dateApplied">
 
-                        <label for="notes"><b>Notes</b></label>
-                        <textarea class="notes" maxlength="255" rows="4" cols="4"></textarea>
-
-                        <input type="hidden" name="timeApplied">
-                        <input type="hidden" name="userID" id="userID" required>
-                    
-                        <button type="submit" class="btn">Create</button>
-                        <button type="button" class="btn cancel" onclick="closeNewJobApplicationForm()">Cancel</button>
-                    </form>
-                </div>
-
+        <div class="container">
+            <div class="row">
                 <div class="bad-job-application-popup" id="bad-job-application-popup">
                     <p class="bad-job-application-message" id="bad-job-application-message"></p>
                     <button type="button" class="bad-job-application-btn" onclick="hideSubmissionErrorPopup()">OK</button>
@@ -82,88 +48,156 @@
                     <button type="button" class="delete-job-application-btn" onclick="showJobApplicationDeletionPopup(this)">Delete</button>
                     <button type="button" class="hide-enlarged-job-application-btn" onclick="hideEnlargedJobApplication(this)">Hide</button>
                 </div>
-
-                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
-                    <h3>Rejected</h3>
-                    <div class="job-application-container" id="rejected-column"></div>
+            </div>
+        
+            <div class="row">
+                <div class="col-sm-3" ondragover="onDragOver(event)" ondrop="onDrop(event)">
+                    <div class="card-box">
+                        <h4 class="text-dark header-title">Interested</h4>
+                        <ul class="sortable-list taskList list-unstyled ui-sortable board-column" id="interested-column"></ul>
+                    </div>
                 </div>
 
-                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
-                    <h3>Accepted</h3>
-                    <div class="job-application-container" id="accepted-column"></div>
+                <div class="col-sm-3" ondragover="onDragOver(event)" ondrop="onDrop(event)">
+                    <div class="card-box">
+                        <h4 class="text-dark header-title">Applied</h4>
+                        <ul class="sortable-list taskList list-unstyled ui-sortable board-column" id="applied-column">
+                        </ul>
+                    </div>
                 </div>
 
-                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
-                    <h3>Applied</h3>
-                    <div class="job-application-container" id="applied-column"></div>
+                <div class="col-sm-3" ondragover="onDragOver(event)" ondrop="onDrop(event)">
+                    <div class="card-box h-100">
+                        <h4 class="text-dark header-title">Accepted</h4>
+                        <ul class="sortable-list taskList list-unstyled ui-sortable board-column" id="accepted-column"></ul>
+                    </div>
                 </div>
 
-                <div class="board-column" ondragover="onDragOver(event)" ondrop="onDrop(event)">
-                    <h3>Interested</h3>
-                    <div class="job-application-container" id="interested-column"></div>
+                <div class="col-sm-3" ondragover="onDragOver(event)" ondrop="onDrop(event)">
+                    <div class="card-box">
+                        <h4 class="text-dark header-title">Rejected</h4>
+                        <ul class="sortable-list taskList list-unstyled ui-sortable board-column" id="rejected-column"></ul>
+                    </div>
                 </div>
-                
             </div>
         </div>
 
+        <input type="hidden" id="userID">
+        <input type="hidden" id="current-open-form">
+
         <script id="interested-list-template" type="text/html">
             {{#interestedList}}
-            <div class="job-application" id="interested-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</p>
-                <p>{{CompanyName}}</p>
-                <p style="font-size:10pt;">{{JobTitle}}</p>
-                <p style="font-size:8pt;"></p>
-                <p hidden>{{Notes}}</p>
+            <div class="job-application-card" id="interested-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
+                <div class="card-body">
+                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                    <p class="card-job-title">{{JobTitle}}</p>
+                    <p class="card-date-applied"></p>
+                    <p class="card-notes" hidden>{{Notes}}</p>
+                    <p hidden>{{ID}}</p>
+                </div>
             </div>
             {{/interestedList}}
+            <button id="new-interested-job-application-btn" class="new-job-application-btn" onclick="openNewJobApplicationForm(this)">New</button>
+            <form action="javascript:validateNewJobApplication()" class="new-job-application-form" id="new-interested-job-application-form">
+                <input type="hidden" value="Interested" name="columnSelection" id="columnSelection">
+                <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
+                <input type="text" placeholder="Enter Job Title" name="jobTitle" autocomplete="off" required>
+                <textarea class="notes" maxlength="255" rows="2" placeholder="Notes"></textarea>
+                <input type="hidden" name="dateApplied">
+                <input type="hidden" name="timeApplied">
+                <input type="hidden" name="userID" id="userID" required>
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn cancel" onclick="closeNewJobApplicationForm(this)">Cancel</button>
+            </form>
         </script>
         <script id="applied-list-template" type="text/html">
             {{#appliedList}}
-            <div class="job-application" id="applied-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</p>
-                <p>{{CompanyName}}</p>
-                <p style="font-size:10pt;">{{JobTitle}}</p>
-                <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
-                <p hidden>{{Notes}}</p>
+            <div class="job-application-card" id="applied-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
+                <div class="card-body">
+                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                    <p class="card-job-title">{{JobTitle}}</p>
+                    <p class="card-date-applied">Applied: {{DateApplied}}</p>
+                    <p class="card-notes" hidden>{{Notes}}</p>
+                    <p hidden>{{ID}}</p>
+                </div>
             </div>
             {{/appliedList}}
+            <button id="new-applied-job-application-btn" class="new-job-application-btn" onclick="openNewJobApplicationForm(this)">New</button>
+            <form action="javascript:validateNewJobApplication()" class="new-job-application-form" id="new-applied-job-application-form">
+                <input type="hidden" value="Applied" name="columnSelection" id="columnSelection">
+                <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
+                <input type="text" placeholder="Enter Job Title" name="jobTitle" autocomplete="off" required>
+                <textarea class="notes" maxlength="255" rows="2" placeholder="Notes"></textarea>
+                Date Applied<input type="date" name="dateApplied">
+                <input type="hidden" name="timeApplied">
+                <input type="hidden" name="userID" id="userID" required>
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn cancel" onclick="closeNewJobApplicationForm(this)">Cancel</button>
+            </form>
         </script>
         <script id="accepted-list-template" type="text/html">
             {{#acceptedList}}
-            <div class="job-application" id="accepted-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</p>
-                <p>{{CompanyName}}</p>
-                <p style="font-size:10pt;">{{JobTitle}}</p>
-                <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
-                <p hidden>{{Notes}}</p>
+            <div class="job-application-card" id="accepted-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
+                <div class="card-body">
+                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                    <p class="card-job-title">{{JobTitle}}</p>
+                    <p class="card-date-applied">Applied: {{DateApplied}}</p>
+                    <p class="card-notes" hidden>{{Notes}}</p>
+                    <p hidden>{{ID}}</p>
+                </div>
             </div>
             {{/acceptedList}}
+            <button id="new-accepted-job-application-btn" class="new-job-application-btn" onclick="openNewJobApplicationForm(this)">New</button>
+            <form action="javascript:validateNewJobApplication()" class="new-job-application-form" id="new-accepted-job-application-form">
+                <input type="hidden" value="Accepted" name="columnSelection" id="columnSelection">
+                <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
+                <input type="text" placeholder="Enter Job Title" name="jobTitle" autocomplete="off" required>
+                <textarea class="notes" maxlength="255" rows="2" placeholder="Notes"></textarea>
+                Date Applied<input type="date" name="dateApplied">
+                <input type="hidden" name="timeApplied">
+                <input type="hidden" name="userID" id="userID" required>
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn cancel" onclick="closeNewJobApplicationForm(this)">Cancel</button>
+            </form>
         </script>
         <script id="rejected-list-template" type="text/html">
             {{#rejectedList}}
-            <div class="job-application" id="rejected-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <p hidden>{{ID}}</p>
-                <p>{{CompanyName}}</p>
-                <p style="font-size:10pt;">{{JobTitle}}</p>
-                <p style="font-size:8pt;">Applied: {{DateApplied}}</p>
-                <p hidden>{{Notes}}</p>
+            <div class="job-application-card" id="rejected-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
+                <div class="card-body">
+                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                    <p class="card-job-title">{{JobTitle}}</p>
+                    <p class="card-date-applied">Applied: {{DateApplied}}</p>
+                    <p class="card-notes" hidden>{{Notes}}</p>
+                    <p hidden>{{ID}}</p>
+                </div>
             </div>
             {{/rejectedList}}
+            <button id="new-rejected-job-application-btn" class="new-job-application-btn" onclick="openNewJobApplicationForm(this)">New</button>
+            <form action="javascript:validateNewJobApplication()" class="new-job-application-form" id="new-rejected-job-application-form">
+                <input type="hidden" value="Rejected" name="columnSelection" id="columnSelection">
+                <input type="text" placeholder="Enter Company Name" name="companyName" autocomplete="off" required>
+                <input type="text" placeholder="Enter Job Title" name="jobTitle" autocomplete="off" required>
+                <textarea class="notes" maxlength="255" rows="2" placeholder="Notes"></textarea>
+                Date Applied<input type="date" name="dateApplied">
+                <input type="hidden" name="timeApplied">
+                <input type="hidden" name="userID" id="userID" required>
+                <button type="submit" class="btn">Create</button>
+                <button type="button" class="btn cancel" onclick="closeNewJobApplicationForm(this)">Cancel</button>
+            </form>
         </script>
+
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script>
                 var username = "<%= username %>";
                 var userID = "<%= userID %>";
                 var imagePath = "<%= imagePath %>";
-                $(".nav-bar-username").html(username);
-                $("#nav-bar-username").html(username + " &#9660");
+                $("#username-dropdown-button").html(username);
                 $('#userID').val(userID);
-                $('.nav-bar-profile-img').attr("src", imagePath);
         </script>
-        
         <script src="../js/board.js"></script>
     </body>
 </html>

@@ -1,13 +1,8 @@
 var socket = io();
 
 userID = $("#userID").val();
+username = $("#username-dropdown-button").html();
 
-
-// Function for toggling showing user info dropdown in nav bar on click of div
-function showUserInfoDropdown() {
-    console.log("hi")
-    $(".nav-bar-user-info-dropdown").toggleClass("nav-bar-user-info-dropdown-show");
-}
 
 // Function for closing user info dropdown if click anywhere else in document
 window.onclick = function(event) {
@@ -25,27 +20,115 @@ window.onclick = function(event) {
 
 
 // Function for opening new job application form
-// Makes popup visible
-function openNewJobApplicationForm() {
-    $("#new-job-application-form").css({
-        'display': 'block'
-    })
+function openNewJobApplicationForm(clickedBtn) {
+    var btnID = $(clickedBtn)[0].id;
+    var today = new Date();
+    var currentDate = today.toISOString().slice(0,10);
+    if (btnID == "new-interested-job-application-btn") {
+        $($("#new-interested-job-application-form").children()[4]).val(currentDate);
+        $("#new-interested-job-application-form").css({
+            'display': 'block'
+        })
+        $("#current-open-form").val("interested")
+    }
+    else if (btnID == "new-applied-job-application-btn") {
+        $($("#new-applied-job-application-form").children()[4]).val(currentDate);
+        $("#new-applied-job-application-form").css({
+            'display': 'block'
+        })
+        $("#current-open-form").val("applied")
+    }
+    else if (btnID == "new-accepted-job-application-btn") {
+        $($("#new-accepted-job-application-form").children()[4]).val(currentDate);
+        $("#new-accepted-job-application-form").css({
+            'display': 'block'
+        })
+        $("#current-open-form").val("accepted")
+    }
+    else if (btnID == "new-rejected-job-application-btn") {
+        $($("#new-rejected-job-application-form").children()[4]).val(currentDate);
+        $("#new-rejected-job-application-form").css({
+            'display': 'block'
+        })
+        $("#current-open-form").val("rejected")
+    } 
+    else {
+        console.log("Bad button click");
+    }
+    closeOtherJobApplicationForms(btnID);
 }
 
 
 // Function for closing new job application form
 // Resets form values and hides the popup
-function closeNewJobApplicationForm() {
+function closeNewJobApplicationForm(clickedBtn) {
     var today = new Date();
     var currentDate = today.toISOString().slice(0,10);
-    $('input[name="dateApplied"]').val(currentDate)
-    $("input[name=companyName]").val("");
-    $("input[name=jobTitle]").val("");
-    $(".notes").val("");
-    $("#new-job-application-form").css({
-        'display': 'none'
+
+    // Reset company name
+    $($($(clickedBtn).parent()[0]).children()[1]).val("");
+
+    // Reset job title
+    $($($(clickedBtn).parent()[0]).children()[2]).val("");
+
+    // Reset notes
+    $($($(clickedBtn).parent()[0]).children()[3]).val("");
+
+    // Reset date
+    $($($(clickedBtn).parent()[0]).children()[4]).val(currentDate);
+
+    // Hide form
+    $($(clickedBtn).parent()[0]).css({
+        "display": "none"
     })
-    hideSubmissionErrorPopup();
+}
+
+// Function for closing all new job applications, other than the one opened
+function closeOtherJobApplicationForms(btnID) {
+    if (btnID == "new-interested-job-application-btn") {
+        $("#new-applied-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-accepted-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-rejected-job-application-form").css({
+            'display': 'none'
+        })
+    }
+    else if (btnID == "new-applied-job-application-btn") {
+        $("#new-interested-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-accepted-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-rejected-job-application-form").css({
+            'display': 'none'
+        })
+    }
+    else if (btnID == "new-accepted-job-application-btn") {
+        $("#new-interested-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-applied-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-rejected-job-application-form").css({
+            'display': 'none'
+        })
+    }
+    else if (btnID == "new-rejected-job-application-btn") {
+        $("#new-interested-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-applied-job-application-form").css({
+            'display': 'none'
+        })
+        $("#new-accepted-job-application-form").css({
+            'display': 'none'
+        })
+    } 
 }
 
 
@@ -56,26 +139,6 @@ window.onload = function() {
     var currentDate = today.toISOString().slice(0,10);
     $('input[name="dateApplied"]').val(currentDate)
 }
-
-
-// Function for when Column selection changes -> update form options based on choice
-$("#columnSelection").change(function() {
-    var column = $(this).val();
-    // If Interested selected, hide Date Applied input and label
-    if (column == "Interested") {
-        $("input[name=dateApplied]").val("");
-        $("input[name=dateApplied]").hide();
-        $("label[for=dateApplied]").hide();
-    } 
-    // Any other column, show Date Applied input and label, and set value to today's date
-    else {
-        var today = new Date();
-        var currentDate = today.toISOString().slice(0,10);
-        $('input[name="dateApplied"]').val(currentDate)
-        $("input[name=dateApplied]").show();
-        $("label[for=dateApplied]").show();
-    }
-})
 
 
 // Function for showing error popup for bad job application submission
@@ -122,7 +185,7 @@ function hideJobApplicationDeletionPopup() {
 // Function for when a drag begins
 function onDragStart(event) {
     // Gets job application ID and its origin column, sets this data for transfer
-    const jobApplicationID = $(event.target).children()[0].innerHTML;
+    const jobApplicationID = $($($(event.target).children()[0]).children()[4]).html();
     const originColumn = $(event.target).parent()[0].id
     const dragData = {jobApplicationID: jobApplicationID, originColumn: originColumn}
     event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
@@ -141,6 +204,9 @@ function onDrop(event) {
     const jobApplicationID = dragData.jobApplicationID;
     const originColumn = dragData.originColumn;
     const destColumn = $(event.target)[0].id;
+    console.log("ID: " + jobApplicationID)
+    console.log("origin: " + originColumn)
+    console.log("dest: " + destColumn)
     // If application dragged to column different from where it started
     if (originColumn != destColumn) {
         updateJobApplicationColumn(jobApplicationID, destColumn);
@@ -154,18 +220,13 @@ function onDrop(event) {
 function enlargeJobApplication(clickedDiv) {
     var position = $(clickedDiv).position();
     var backgroundColor = $(clickedDiv).css('background-color');
+    console.log(backgroundColor);
     // Get info from clicked job application div
-    // Div children:
-    // 0 - hidden paragraph containing job application ID
-    // 1 - company name
-    // 2 - job title
-    // 3 - date applied
-    // 4 - notes
-    var jobApplicationID = $(clickedDiv).children()[0].innerHTML;
-    var companyName = $(clickedDiv).children()[1].innerHTML;
-    var jobTitle = $(clickedDiv).children()[2].innerHTML;
-    var dateApplied = $(clickedDiv).children()[3].innerHTML;
-    var notes = $(clickedDiv).children()[4].innerHTML;
+    var companyName = $($($(clickedDiv).children()).children()[0]).html();
+    var jobTitle = $($($(clickedDiv).children()).children()[1]).html();
+    var dateApplied = $($($(clickedDiv).children()).children()[2]).html();
+    var notes = $($($(clickedDiv).children()).children()[3]).html();
+    var jobApplicationID = $($($(clickedDiv).children()).children()[4]).html();
     $("#enlarged-job-application").offset(position);
     $(".delete-job-application-btn").val(jobApplicationID);
     $("#enlarged-job-application-company-name").html(companyName);
@@ -201,7 +262,24 @@ function navToUserProfilePage() {
         },
         success: function(result) {
             if (typeof result.redirect == 'string') {
-                window.location = result.redirect
+                window.location = result.redirect;
+            }
+        }
+    })
+}
+
+// Function for navigation to Board Page
+function navToBoardPage() {
+    $.ajax({
+        type: 'POST',
+        url: '/navToBoardPage',
+        data: {
+            "userID": userID,
+            "username": username
+        },
+        success: function(result) {
+            if (typeof result.redirect == 'string') {
+                window.location = result.redirect;
             }
         }
     })
@@ -210,15 +288,13 @@ function navToUserProfilePage() {
 
 // Function to validate new job application when submitted
 function validateNewJobApplication() {
+    var form = $("#current-open-form").val();
     // Get form values
-    var companyName = $("input[name=companyName]").val();
-    var jobTitle = $("input[name=jobTitle]").val();
-    var dateApplied = $("input[name=dateApplied]").val();
-    var userID = $("input[name=userID]").val();
-    var notes = $(".notes").val();
-    var columnDropdown = document.getElementById("columnSelection");
-    var column = columnDropdown.options[columnDropdown.selectedIndex].value;
-    
+    var companyName = $($("#new-" + form + "-job-application-form").children()[1]).val();
+    var jobTitle = $($("#new-" + form + "-job-application-form").children()[2]).val();
+    var notes = $($("#new-" + form + "-job-application-form").children()[3]).val();
+    var dateApplied = $($("#new-" + form + "-job-application-form").children()[4]).val();
+    var column = $($("#new-" + form + "-job-application-form").children()[0]).val();
     var goodToPost = true;
 
     // Make sure date not in the future (only check if date is not empty)
@@ -274,7 +350,6 @@ function validateNewJobApplication() {
 // Function for deleting a job application
 function deleteJobApplication(btn) {
     var jobApplicationID = $(btn).val();
-    console.log(jobApplicationID)
     $.ajax({
         type: 'POST',
         url: '/deleteJobApplication',
