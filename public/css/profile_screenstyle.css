@@ -86,12 +86,3 @@ span.tags:hover {
     width: 15%;
     display: none;
 }
-
-.delete-skill-btn {
-    padding: 0px;
-    background-color: rgb(199, 30, 30);
-    color: white;
-    border-radius: 50px;
-    font-size: 6pt;
-    vertical-align: top;
-}

@@ -60,7 +60,7 @@
         <script id="skills-template" type="text/html">
             <strong>Skills: </strong>
             {{#skillsList}}
-            <span class="tags">{{Skill}} <button class="delete-skill-btn" onclick="deleteSkill(this)">X</button></span>
+            <span class="tags">{{Skill}} <button class="close" style="float:none;" onclick="deleteSkill(this)">&times;</button></span>
             {{/skillsList}}
             <span class="tags" id="new-skill-btn" onclick="showNewSkillInput()">Add Skill +</span>
             <form id="new-skill-form" action="javascript:addSkill()">
