@@ -28,29 +28,27 @@
 
 
         <div class="container">
-            <div class="row">
-                <div class="bad-job-application-popup" id="bad-job-application-popup">
-                    <p class="bad-job-application-message" id="bad-job-application-message"></p>
-                    <button type="button" class="bad-job-application-btn" onclick="hideSubmissionErrorPopup()">OK</button>
-                </div>
+            <div class="bad-job-application-popup" id="bad-job-application-popup">
+                <p class="bad-job-application-message" id="bad-job-application-message"></p>
+                <button type="button" class="bad-job-application-btn" onclick="hideSubmissionErrorPopup()">OK</button>
+            </div>
 
-                <div class="delete-job-application-popup" id="delete-job-application-popup">
-                    <p>Are you sure you want to delete this job application?</p>
-                    <button type="button" class="delete-job-application-btn-yes" id="delete-job-application-btn-yes" onclick="deleteJobApplication(this)">Yes</button>
-                    <button type="button" class="delete-job-application-btn-no" onclick="hideJobApplicationDeletionPopup()">No</button>
-                </div>
+            <div class="delete-job-application-popup" id="delete-job-application-popup">
+                <p>Are you sure you want to delete this job application?</p>
+                <button type="button" class="delete-job-application-btn-yes" id="delete-job-application-btn-yes" onclick="deleteJobApplication(this)">Yes</button>
+                <button type="button" class="delete-job-application-btn-no" onclick="hideJobApplicationDeletionPopup()">No</button>
+            </div>
+        
+            <div class="row">
 
                 <div class="enlarged-job-application" id="enlarged-job-application">
-                    <h1 id="enlarged-job-application-company-name"></h1>
-                    <h2 id="enlarged-job-application-job-title"></h2>
-                    <h3 id="enlarged-job-application-date-applied"></h3>
+                    <h5 id="enlarged-job-application-title"></h5>
+                    <p id="enlarged-job-application-date-applied"></hp>
                     <p id="enlarged-job-application-notes"></p>
                     <button type="button" class="delete-job-application-btn" onclick="showJobApplicationDeletionPopup(this)">Delete</button>
                     <button type="button" class="hide-enlarged-job-application-btn" onclick="hideEnlargedJobApplication(this)">Hide</button>
                 </div>
-            </div>
-        
-            <div class="row">
+
                 <div class="col-sm-3" ondragover="onDragOver(event)" ondrop="onDrop(event)">
                     <div class="card-box">
                         <h4 class="text-dark header-title">Interested</h4>
@@ -88,8 +86,8 @@
         <script id="interested-list-template" type="text/html">
             {{#interestedList}}
             <div class="job-application-card" id="interested-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <div class="card-body">
-                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                <div class="job-application-card-body">
+                    <p class="card-company-name">{{CompanyName}}</p>
                     <p class="card-job-title">{{JobTitle}}</p>
                     <p class="card-date-applied"></p>
                     <p class="card-notes" hidden>{{Notes}}</p>
@@ -113,8 +111,8 @@
         <script id="applied-list-template" type="text/html">
             {{#appliedList}}
             <div class="job-application-card" id="applied-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <div class="card-body">
-                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                <div class="job-application-card-body">
+                    <p class="card-company-name">{{CompanyName}}</p>
                     <p class="card-job-title">{{JobTitle}}</p>
                     <p class="card-date-applied">Applied: {{DateApplied}}</p>
                     <p class="card-notes" hidden>{{Notes}}</p>
@@ -138,8 +136,8 @@
         <script id="accepted-list-template" type="text/html">
             {{#acceptedList}}
             <div class="job-application-card" id="accepted-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <div class="card-body">
-                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                <div class="job-application-card-body">
+                    <p class="card-company-name">{{CompanyName}}</p>
                     <p class="card-job-title">{{JobTitle}}</p>
                     <p class="card-date-applied">Applied: {{DateApplied}}</p>
                     <p class="card-notes" hidden>{{Notes}}</p>
@@ -163,8 +161,8 @@
         <script id="rejected-list-template" type="text/html">
             {{#rejectedList}}
             <div class="job-application-card" id="rejected-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
-                <div class="card-body">
-                    <h5 class="card-company-name">{{CompanyName}}</h5>
+                <div class="job-application-card-body">
+                    <p class="card-company-name">{{CompanyName}}</p>
                     <p class="card-job-title">{{JobTitle}}</p>
                     <p class="card-date-applied">Applied: {{DateApplied}}</p>
                     <p class="card-notes" hidden>{{Notes}}</p>

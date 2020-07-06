@@ -1,14 +1,97 @@
 
-.user-profile-username {
-    color:red;
+.profile {
+    min-height: 355px;
+    display: inline-block;
 }
 
-.user-profile-img {
-    float: left;
-    max-height: none;
-    height: 500px;
+.profile-picture {
+    margin-top: 10%;
+    width: 75%;
+    border: 2px solid black;
+    border-radius: 15px;
 }
 
-.user-profile-info-item {
-    color: black;
+
+.user-profile-info-item:focus {
+    cursor: text;
+    outline: none;
+    background-color: white;
+    border: 2px solid blue;
+}
+
+
+#profile-email {
+    text-align: center;
+}
+
+#profile-about {
+    background-color: rgb(245, 245, 245);
+    border: none;
+    width: 85%;
+    vertical-align: top;
+    resize: none;
+}
+
+#profile-about:hover {
+    padding: 3px;
+    border: 1px solid rgb(0, 228, 0)
+}
+
+#profile-about:focus {
+    background-color: white;
+    padding: 3px;
+    outline: none;
+    border: 1px solid darkblue;
+}
+
+#profile-skills {
+
+}
+
+
+span.tags {
+    background: #1abc9c;
+    border-radius: 2px;
+    color: #f5f5f5;
+    font-weight: bold;
+    padding: 2px 4px;
+    white-space: nowrap;
+}
+
+span.tags:hover {
+    border: 1px solid black;
+    cursor: default;
+}
+
+#new-skill-btn {
+    background: rgb(0, 228, 0);
+    cursor: pointer;
+}
+
+#new-skill-btn:hover {
+    background: rgb(23, 177, 23);
+}
+
+#new-skill-form {
+    display: inline;
+}
+
+#new-skill-input {
+    background: #1abc9c;
+    border: none;
+    border-radius: 2px;
+    color: #f5f5f5;
+    font-weight: bold;
+    padding: 2px 4px;
+    width: 15%;
+    display: none;
+}
+
+.delete-skill-btn {
+    padding: 0px;
+    background-color: rgb(199, 30, 30);
+    color: white;
+    border-radius: 50px;
+    font-size: 6pt;
+    vertical-align: top;
 }

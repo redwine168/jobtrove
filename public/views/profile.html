@@ -6,37 +6,73 @@
         <link rel="icon" href="/img/trove.png">
         <link rel="stylesheet" href="/css/screenstyle.css">
         <link rel="stylesheet" href="/css/profile_screenstyle.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     </head>
-    <body>
-        <div class="nav-bar">
-            <div class="nav-bar-user-info" onclick="showUserInfoDropdown()">
-                <img src="" class="nav-bar-profile-img">
-                <p class="nav-bar-username" id="nav-bar-username"></p>
-                <div class="nav-bar-user-info-dropdown">
-                    <img src="" class="nav-bar-profile-img" style="float:none;display:block;">
-                    <p class="nav-bar-username" style="float:none;display:block;"></p>
-                    <button type="button" class="user-info-dropdown-btn" onclick="navToUserProfilePage()">Edit Profile</button>
+    <body style="background-color:rgb(245, 245, 245);">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom:20px">
+            <a class="navbar-brand" href="/">
+                <img src="/img/trove.png" width="30" height="30" style="display:inline">
+                Trove
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-info dropdown-toggle navbar-btn" type="button" id="username-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="dropdown-menu" aria-labelledby="username-dropdown-button">
+                    <a class="dropdown-item" style="cursor:pointer;" onclick="navToUserProfilePage()">Edit Profile</a>
+                    <a class="dropdown-item" href="#">Sign Out</a>
                 </div>
             </div>
-            <div class="nav-bar-button">
-                Applications Board
-            </div>
-            <div class="nav-bar-button">
-                To-Do List
+            <button class="btn btn-info navbar-btn" type="button" onclick="navToBoardPage()">Job App Board</button>
+            <button class="btn btn-info navbar-btn" type="button" onclick="navToToDoListPage()">To-Do List</button>
+        </nav>
+
+        <div class="container">
+            <div class="row">
+                <div class="well profile">
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-8">
+                                <h2 id="profile-full-name"></h2>
+                                <p id="profile-email"></p>
+                                <p>
+                                    <label><strong>About: </strong></label>
+                                    <textarea id="profile-about" rows="3" maxlength="150" onfocusout="updateUserAbout()"></textarea>
+                                </p>
+                                <p id="profile-skills">
+                                    
+                                </p>
+                            </div>
+                            <div class="col-xs-12 col-sm-4 text-center">
+                                <figure>
+                                    <img src="" class="profile-picture">
+                                </figure>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <h1 class="user-profile-username"></h1>
-        <img src="" class="user-profile-img" style="height:100px">
-        <h2 class="user-profile-info-item" id="user-profile-first-name"></h2>
-        <h2 class="user-profile-info-item" id="user-profile-last-name"></h2>
-        <h2 class="user-profile-info-item" id="user-profile-email"></h2>
-
         <input type="hidden" id="userID"></input>
+        <input type="hidden" id="firstName"></input>
+        <input type="hidden" id="lastName"></input>
+        <input type="hidden" id="email"></input>
+
+        <script id="skills-template" type="text/html">
+            <strong>Skills: </strong>
+            {{#skillsList}}
+            <span class="tags">{{Skill}} <button class="delete-skill-btn" onclick="deleteSkill(this)">X</button></span>
+            {{/skillsList}}
+            <span class="tags" id="new-skill-btn" onclick="showNewSkillInput()">Add Skill +</span>
+            <form id="new-skill-form" action="javascript:addSkill()">
+                <input id="new-skill-input" onfocusout="addSkill()">
+                <input type="submit" style="display:none;">
+            </form>
+        </script>
 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
         <script>
                 var username = "<%= username %>";
                 var firstName = "<%= firstName %>";
@@ -44,14 +80,16 @@
                 var email = "<%= email %>";
                 var userID = "<%= userID %>";
                 var imagePath = "<%= imagePath %>";
-                $('.nav-bar-profile-img').attr("src", imagePath);
-                $(".nav-bar-username").html(username + " &#9660");
-                $('.userID').val(userID);
-                $('.user-profile-username').html(username);
-                $('.user-profile-img').attr("src", imagePath);
-                $('#user-profile-first-name').html(firstName);
-                $('#user-profile-last-name').html(lastName);
-                $('#user-profile-email').html(email);
+                var about = "<%= about %>";
+                var skills = "<%= skills %>";
+                $("#username-dropdown-button").html(username);
+                $('#userID').val(userID);
+                $('#firstName').val(firstName);
+                $('#lastName').val(lastName);
+                $('#email').val(email);
+                $('#profile-about').val(about)
+                $('.profile-picture').attr("src", imagePath);
         </script>
+        <script src="../js/profile.js"></script>
     </body>
 </html>

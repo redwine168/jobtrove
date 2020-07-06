@@ -1,10 +1,6 @@
 
 function openLoginFormPopup(clickedBtn) {
-    console.log(clickedBtn.id);
-    console.log($(".login-form"))
-    console.log($(".create-account-form"))
     if (clickedBtn.id == "open-login-form-btn") {
-        console.log("1")
         $(".login-form").css({
             'display': 'block'
         })
@@ -12,7 +8,6 @@ function openLoginFormPopup(clickedBtn) {
             'display': 'none'
         })
     } else if (clickedBtn.id == "open-create-account-form-btn") {
-        console.log("2")
         $(".create-account-form").css({
             'display': 'block'
         })

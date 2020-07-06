@@ -18,7 +18,6 @@ window.onclick = function(event) {
     }
 }
 
-
 // Function for opening new job application form
 function openNewJobApplicationForm(clickedBtn) {
     var btnID = $(clickedBtn)[0].id;
@@ -140,7 +139,6 @@ window.onload = function() {
     $('input[name="dateApplied"]').val(currentDate)
 }
 
-
 // Function for showing error popup for bad job application submission
 function showSubmissionErrorPopup(inputWithError, errorMessage) {
     var position = inputWithError.position();
@@ -203,10 +201,19 @@ function onDrop(event) {
     const dragData = JSON.parse(event.dataTransfer.getData('text'));
     const jobApplicationID = dragData.jobApplicationID;
     const originColumn = dragData.originColumn;
-    const destColumn = $(event.target)[0].id;
-    console.log("ID: " + jobApplicationID)
-    console.log("origin: " + originColumn)
-    console.log("dest: " + destColumn)
+    var destColumn;
+    // If drop on empty column space
+    if ($($(event.target)[0]).hasClass("board-column")) {
+        destColumn = $(event.target)[0].id;
+    }
+    // If drop on card body
+    else if ($($(event.target)[0]).hasClass("job-application-card-body")) {
+        destColumn = $($($(event.target)[0]).parent()[0]).parent()[0].id;
+    } 
+    // If drop on text in card body
+    else if ($($($(event.target)[0]).parent()[0]).hasClass("job-application-card-body")) {
+        destColumn = $($($($(event.target)[0]).parent()[0]).parent()[0]).parent()[0].id;
+    }
     // If application dragged to column different from where it started
     if (originColumn != destColumn) {
         updateJobApplicationColumn(jobApplicationID, destColumn);
@@ -218,8 +225,7 @@ function onDrop(event) {
 // --------------------------------------------
 
 function enlargeJobApplication(clickedDiv) {
-    var position = $(clickedDiv).position();
-    var backgroundColor = $(clickedDiv).css('background-color');
+    var backgroundColor = $($(clickedDiv).parent()[0]).css('background-color');
     console.log(backgroundColor);
     // Get info from clicked job application div
     var companyName = $($($(clickedDiv).children()).children()[0]).html();
@@ -227,10 +233,8 @@ function enlargeJobApplication(clickedDiv) {
     var dateApplied = $($($(clickedDiv).children()).children()[2]).html();
     var notes = $($($(clickedDiv).children()).children()[3]).html();
     var jobApplicationID = $($($(clickedDiv).children()).children()[4]).html();
-    $("#enlarged-job-application").offset(position);
     $(".delete-job-application-btn").val(jobApplicationID);
-    $("#enlarged-job-application-company-name").html(companyName);
-    $("#enlarged-job-application-job-title").html(jobTitle);
+    $("#enlarged-job-application-title").html(companyName + " - " + jobTitle);
     $("#enlarged-job-application-date-applied").html(dateApplied);
     $("#enlarged-job-application-notes").html(notes);
     $("#enlarged-job-application").css({
@@ -335,7 +339,7 @@ function validateNewJobApplication() {
                 //console.log(result.message);
                 closeNewJobApplicationForm();
                 // Emit a homepage refresh request to get updated list of job applications
-                socket.emit('homepage-refresh-request', {userID}, (error) => {
+                socket.emit('board-refresh-request', {userID}, (error) => {
                     if (error) {
                         alert(error)
                         location.href = '/home'
@@ -361,7 +365,7 @@ function deleteJobApplication(btn) {
             hideJobApplicationDeletionPopup();
             hideEnlargedJobApplication();
             // Emit a homepage refresh request to get updated list of job applications
-            socket.emit('homepage-refresh-request', {userID}, (error) => {
+            socket.emit('board-refresh-request', {userID}, (error) => {
                 if (error) {
                     alert(error)
                     location.href = '/home'
@@ -400,7 +404,7 @@ function updateJobApplicationColumn(jobApplicationID, destColumn) {
             success: function(result) {
                 //console.log(result.message);
                 // Emit a homepage refresh request to get updated list of job applications
-                socket.emit('homepage-refresh-request', {userID}, (error) => {
+                socket.emit('board-refresh-request', {userID}, (error) => {
                     if (error) {
                         alert(error)
                         location.href = '/home'
@@ -439,6 +443,7 @@ socket.on('jobApplications', (jobApplications) => {
             console.log("Bad column name.");
         }
     }
+    console.log(appliedList);
     // Render job applications in Interested column
     const interestedListTemplate = document.querySelector('#interested-list-template').innerHTML
     const interestedColumn = document.querySelector('#interested-column')
@@ -474,7 +479,7 @@ socket.on('jobApplications', (jobApplications) => {
 
 
 // When a user enters their home page, sends user info to server
-socket.emit('homepage-refresh-request', {userID}, (error) => {
+socket.emit('board-refresh-request', {userID}, (error) => {
     if (error) {
         alert(error)
         location.href = '/home'

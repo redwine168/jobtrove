@@ -6,8 +6,9 @@
 
 .board-column {
     border: 2px solid black;
-    height: 100%;
+    height: 75%;
     text-align: center;
+    overflow: scroll;
 }
 
 #interested-column {
@@ -38,26 +39,44 @@
     opacity: 85%;
 }
 
-.card-job-title {
-    font-size: 8pt;
+.job-application-card:hover {
+    opacity: 100%;
+}
+
+.job-application-card-body {
+    margin: 0px 0px 0px 0px;
+}
+
+.job-application-card-body p {
+    margin: 0px 0px 0px 0px;
     padding: 0px;
 }
 
+.card-company-name {
+    font-size: 12pt;
+}
+
+.card-job-title {
+    font-size: 10pt;
+}
+
 .card-date-applied {
-    font-size: 7pt;
-    padding: 0px;
+    font-size: 8pt;
 }
 
 .card-notes {
     font-size: 7pt;
-    padding: 0px;
 }
 
 .enlarged-job-application {
     display: none;
-    position: fixed;
-    width: 250px;
-    border: 2px solid white;
+    position: absolute;
+    top: 25%;
+    left: 40%;
+    right: 40%;
+    padding: 5px;
+    opacity: 95%;
+    border: 2px solid black;
     color: black;
     text-align: center;
     z-index: 10;

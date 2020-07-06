@@ -43,7 +43,6 @@ var config = {
 
 // GET for home page (landing page)
 app.get('/', function(request, response) {
-    console.log("Request for login page");
     response.render(publicDirectoryPath + 'views/home.html');
 })
 
@@ -102,13 +101,17 @@ app.get('/profile', function(request, response) {
                     var lastName = results.recordset[0]["LastName"];
                     var email = results.recordset[0]["Email"];
                     var imagePath = results.recordset[0]["ImagePath"];
+                    var about = results.recordset[0]["About"];
+                    var skills = results.recordset[0]["Skills"];
                     response.render(publicDirectoryPath + 'views/profile.html', {
                         username: username,
                         firstName: firstName,
                         lastName: lastName,
                         email: email,
                         userID: userID,
-                        imagePath: imagePath
+                        imagePath: imagePath,
+                        about: about,
+                        skills: skills
                     });
                 } else {
                     console.log("Could not retrieve user data. Help plz");
@@ -119,6 +122,15 @@ app.get('/profile', function(request, response) {
         response.send('Please login to view this page!');
     }
 });
+
+
+// GET for To-Do List page
+app.get('/to-do', function(request, response) {
+    var userID = request.session.userID;
+    response.render(publicDirectoryPath + 'views/to-do.html', {
+        userID: userID
+    })
+})
 
 
 
@@ -173,6 +185,8 @@ app.post('/insertUser', function(request, response) {
         dbConnection.input('firstName', sql.VarChar, firstName);
         dbConnection.input('lastName', sql.VarChar, lastName);
         dbConnection.input('email', sql.VarChar, email);
+        dbConnection.input('about', sql.VarChar, "");
+        dbConnection.input('skills', sql.VarChar, "");
 
         // First, look to see if this username is in use
         var sql_checkUsernameInUse = 'SELECT * FROM Users WHERE Username = @username';
@@ -185,7 +199,7 @@ app.post('/insertUser', function(request, response) {
                     // If no results, email is not assigned to a different account
                     if (emailResults.recordset.length == 0) {
                         // And we can insert new account into table
-                        var sql_insertUser = 'INSERT INTO Users(Username,Password,FirstName,LastName,Email) VALUES(@username,@password,@firstName,@lastName,@email); SELECT SCOPE_IDENTITY() AS ID'
+                        var sql_insertUser = 'INSERT INTO Users(Username,Password,FirstName,LastName,Email,About,Skills) VALUES(@username,@password,@firstName,@lastName,@email,@about,@skills); SELECT SCOPE_IDENTITY() AS ID'
                         dbConnection.query(sql_insertUser).then(function(insertResults) {
                             // Add entry to ProfileImagePaths, defaulted to the default image
                             var userID = insertResults.recordset[0]["ID"];
@@ -269,12 +283,81 @@ app.post('/updateJobApplicationColumn', function(request, response) {
         dbConnection.input('jobApplicationID', sql.Int, jobApplicationID);
         dbConnection.input('destColumn', sql.VarChar, destColumn);
         var sql_updateJobApplicationColumn = 'UPDATE JobApplications SET BoardColumn=@destColumn WHERE ID=@jobApplicationID';
-        dbConnection.query(sql_updateJobApplicationColumn).then(function(deletionResults) {
+        dbConnection.query(sql_updateJobApplicationColumn).then(function(result) {
             response.send({message: "Job Application column updated successfully!"});
         });
     })
 });
 
+
+app.post('/updateUserAbout', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var about = request.body.about;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('about', sql.VarChar, about);
+        var sql_updateUserAbout = 'UPDATE Users SET About=@about WHERE ID=@userID';
+        dbConnection.query(sql_updateUserAbout).then(function(result) {
+            response.send({message: "About updated successfully!"});
+        });
+    })
+});
+
+
+app.post('/addSkillToUser', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var skill = "," + request.body.skill;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('skill', sql.VarChar, skill);
+        var sql_addSkillToUser = 'UPDATE Users SET Skills=Skills+@skill WHERE ID=@userID';
+        dbConnection.query(sql_addSkillToUser).then(function(result) {
+            response.send({message: "Skill added successfully!"});
+        });
+    })
+})
+
+
+app.post('/deleteSkill', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var skill = "," + request.body.skill;
+    // open db connection
+    sql.connect(config,function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('skill', sql.VarChar, skill);
+        // First we must get the string contained in Skills column of Users table
+        var sql_getUserSkills = 'SELECT * FROM Users WHERE ID=@userID';
+        dbConnection.query(sql_getUserSkills).then(function(result) {
+            var skillString = result.recordset[0]["Skills"];
+            var newSkillString = skillString.replace(skill, "");
+            // Now with the new updated skill string, put it back in table
+            dbConnection.input('newSkillString', sql.VarChar, newSkillString);
+            var sql_updateUserSkills = 'UPDATE Users SET Skills=@newSkillString WHERE ID=@userID';
+            dbConnection.query(sql_updateUserSkills).then(function(result2) {
+                response.send({message: "Skill deleted successfully!"});
+            })
+        })
+    })
+})
+
+
+// ----------------------------
+// ----- Navigation POSTs -----
+// ----------------------------
 
 app.post('/navToUserProfilePage', function(request, response) {
     var userID = request.body.userID;
@@ -294,6 +377,15 @@ app.post('/navToBoardPage', function(request, response) {
 })
 
 
+app.post('/navToToDoListPage', function(request, response) {
+    console.log("Trying to nav to To-Do")
+    var userID = request.body.userID;
+    request.session.loggedin = true;
+    request.session.userID = userID;
+    response.send({redirect: '/to-do'})
+})
+
+
 
 
 
@@ -305,11 +397,11 @@ app.post('/navToBoardPage', function(request, response) {
 // When a user connects
 io.on('connection', (socket) => {
 
-    // When a user enters their homepage
-    socket.on('homepage-refresh-request', (userInfo, callback) => {
+    // When a user requests a refresh to their board page
+    socket.on('board-refresh-request', (userInfo, callback) => {
         // Get user info and add socket to appropriate room
         var userID = userInfo.userID;
-        var room = 'home' + userID;
+        var room = 'board' + userID;
         socket.join(room);
 
         // open db connection
@@ -324,6 +416,26 @@ io.on('connection', (socket) => {
             })
         })
     })
+
+    // When a user requests a refresh to their profile page (skills)
+    socket.on('skills-refresh-request', (userInfo, callback) => {
+        // Get user info and add socket to appropriate room
+        var userID = userInfo.userID;
+        var room = 'profile' + userID;
+        socket.join(room);
+        // open db connection
+        sql.connect(config, function(err) {
+            if (err) console.log(err);
+            // Initialize connection and parameters
+            var dbConnection = new sql.Request();
+            dbConnection.input('userID', sql.Int, userID);
+            var sql_getJobApplications = 'SELECT * FROM Users WHERE ID=@userID';
+            dbConnection.query(sql_getJobApplications).then(function(results) {
+                io.to(room).emit('skills', results.recordset[0]["Skills"]);
+            })
+        })
+    })
+
 })
 
 
