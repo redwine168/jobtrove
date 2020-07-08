@@ -6,7 +6,7 @@
 
 .board-column {
     border: 2px solid black;
-    height: 75%;
+    height: 85%;
     text-align: center;
     overflow: scroll;
 }
@@ -34,13 +34,22 @@
     background-color: #fff;
     text-align: center;
     border: 2px solid black;
-    border-radius: 25px;
+    border-radius: 5px;
     cursor: pointer;
     opacity: 85%;
 }
 
 .job-application-card:hover {
     opacity: 100%;
+}
+
+.board-column-title {
+    width: 100%;
+    margin: 3px 0px 3px 0px;
+    background-color: rgb(41, 43, 44);
+    color: white;
+    text-align: center;
+    border-radius: 5px;
 }
 
 .job-application-card-body {
@@ -72,15 +81,91 @@
     display: none;
     position: absolute;
     top: 25%;
-    left: 40%;
-    right: 40%;
+    left: 28%;
+    right: 28%;
     padding: 5px;
-    opacity: 95%;
-    border: 2px solid black;
-    color: black;
+    border: 5px solid black;
+    border-radius: 5px;
+    color: white;
+    background-color: rgb(39, 39, 39);
     text-align: center;
     z-index: 10;
     font-size: 12pt;
+}
+
+.card-header {
+    position: relative;
+    left: 10%;
+    right: 10%;
+    width: 80%;
+    border-radius: 20px;
+    text-align: center;
+}
+
+#enlarged-job-application-company-name {
+    background-color: rgb(80,80,80);
+    color: white;
+    outline: none;
+    border: 1px solid rgb(80,80,80);
+    text-align: center;
+    font-size: 16pt;
+    width: 75%;
+}
+
+#enlarged-job-application-company-name:hover {
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
+#enlarged-job-application-company-name:focus {
+    background-color: rgb(100,100,100);
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
+#enlarged-job-application-job-title {
+    background-color: rgb(80,80,80);
+    color: white;
+    outline: none;
+    border: 1px solid rgb(80,80,80);
+    text-align: center;
+    font-size: 14pt;
+    width: 75%;
+}
+
+#enlarged-job-application-job-title:hover {
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
+#enlarged-job-application-job-title:focus {
+    background-color: rgb(100,100,100);
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
+#enlarged-job-application-date-applied {
+    padding: 5px;
+    cursor: text;
+    width: 100%;
+    border: 1px solid rgb(39, 39, 39);
+    text-align: center;
+}
+
+#enlarged-job-application-date-applied:hover {
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
+#enlarged-job-application-notes {
+    padding: 2px;
+    width: 100%;
+    color: white;
+    background-color: rgb(39, 39, 39);
+    border: 1px solid white;
+    border-radius: 5px;
+    outline: none;
+    resize: none;
 }
 
 .delete-job-application-btn {
@@ -106,39 +191,19 @@
 /* Button used to open the Create New Job form - fixed at the bottom of the page */
 .new-job-application-btn {
     float: bottom;
-    background-color: #555;
-    color: white;
-    width: 90%;
-    border-radius: 10px;
-    cursor: pointer;
-    margin: 3px 0px 3px 0px;
 }
 
 
-/* New job application - hidden by default */
+.new-job-application-form-container {
+    display: none;
+    width: 100%;
+}
+
 .new-job-application-form {
-  display: none;
-  position: absolute;
-  background-color: white;
-  border: 2px solid black;
-  font-size: 8pt;
-}
+    font-size: 8pt;
+    cursor: default;
+  }
 
-#new-interested-job-application-form {
-    background-color: rgb(253, 242, 181);
-}
-
-#new-applied-job-application-form {
-    background-color: rgb(168, 188, 253);
-}
-
-#new-accepted-job-application-form {
-    background-color: rgb(162, 247, 162);
-}
-
-#new-rejected-job-application-form {
-    background-color: rgb(255, 164, 164);
-}
 
 /* Full-width input fields */
 .new-job-application-form input[type=text] {

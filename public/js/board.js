@@ -20,33 +20,48 @@ window.onclick = function(event) {
 
 // Function for opening new job application form
 function openNewJobApplicationForm(clickedBtn) {
+    // First, just make sure all buttons are showing (clickedBtn will be closed)
+    showNewJobApplicationBtns();
     var btnID = $(clickedBtn)[0].id;
+    console.log(btnID)
     var today = new Date();
     var currentDate = today.toISOString().slice(0,10);
     if (btnID == "new-interested-job-application-btn") {
         $($("#new-interested-job-application-form").children()[4]).val(currentDate);
-        $("#new-interested-job-application-form").css({
+        $("#new-interested-job-application-btn").css({
+            'display': 'none'
+        })
+        $("#new-interested-job-application-form-container").css({
             'display': 'block'
         })
         $("#current-open-form").val("interested")
     }
     else if (btnID == "new-applied-job-application-btn") {
         $($("#new-applied-job-application-form").children()[4]).val(currentDate);
-        $("#new-applied-job-application-form").css({
+        $("#new-applied-job-application-btn").css({
+            'display': 'none'
+        })
+        $("#new-applied-job-application-form-container").css({
             'display': 'block'
         })
         $("#current-open-form").val("applied")
     }
     else if (btnID == "new-accepted-job-application-btn") {
         $($("#new-accepted-job-application-form").children()[4]).val(currentDate);
-        $("#new-accepted-job-application-form").css({
+        $("#new-accepted-job-application-btn").css({
+            'display': 'none'
+        })
+        $("#new-accepted-job-application-form-container").css({
             'display': 'block'
         })
         $("#current-open-form").val("accepted")
     }
     else if (btnID == "new-rejected-job-application-btn") {
         $($("#new-rejected-job-application-form").children()[4]).val(currentDate);
-        $("#new-rejected-job-application-form").css({
+        $("#new-rejected-job-application-btn").css({
+            'display': 'none'
+        })
+        $("#new-rejected-job-application-form-container").css({
             'display': 'block'
         })
         $("#current-open-form").val("rejected")
@@ -76,58 +91,70 @@ function closeNewJobApplicationForm(clickedBtn) {
     // Reset date
     $($($(clickedBtn).parent()[0]).children()[4]).val(currentDate);
 
-    // Hide form
-    $($(clickedBtn).parent()[0]).css({
+    // Hide form container
+    $($($(clickedBtn).parent()[0]).parent()[0]).css({
         "display": "none"
     })
+    showNewJobApplicationBtns();
 }
 
 // Function for closing all new job applications, other than the one opened
+// and make sure each column's new card button appears as well
 function closeOtherJobApplicationForms(btnID) {
     if (btnID == "new-interested-job-application-btn") {
-        $("#new-applied-job-application-form").css({
+        // Hide other forms
+        $("#new-applied-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form").css({
+        $("#new-accepted-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-rejected-job-application-form").css({
+        $("#new-rejected-job-application-form-container").css({
             'display': 'none'
         })
     }
     else if (btnID == "new-applied-job-application-btn") {
-        $("#new-interested-job-application-form").css({
+        // Hide other forms
+        $("#new-interested-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form").css({
+        $("#new-accepted-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-rejected-job-application-form").css({
+        $("#new-rejected-job-application-form-container").css({
             'display': 'none'
         })
     }
     else if (btnID == "new-accepted-job-application-btn") {
-        $("#new-interested-job-application-form").css({
+        // Hide other forms
+        $("#new-interested-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-applied-job-application-form").css({
+        $("#new-applied-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-rejected-job-application-form").css({
+        $("#new-rejected-job-application-form-container").css({
             'display': 'none'
         })
     }
     else if (btnID == "new-rejected-job-application-btn") {
-        $("#new-interested-job-application-form").css({
+        // Hide other forms
+        $("#new-interested-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-applied-job-application-form").css({
+        $("#new-applied-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form").css({
+        $("#new-accepted-job-application-form-container").css({
             'display': 'none'
         })
-    } 
+    }
+}
+
+function showNewJobApplicationBtns() {
+    $(".new-job-application-btn").css({
+        'display': 'block'
+    })
 }
 
 
@@ -226,7 +253,6 @@ function onDrop(event) {
 
 function enlargeJobApplication(clickedDiv) {
     var backgroundColor = $($(clickedDiv).parent()[0]).css('background-color');
-    console.log(backgroundColor);
     // Get info from clicked job application div
     var companyName = $($($(clickedDiv).children()).children()[0]).html();
     var jobTitle = $($($(clickedDiv).children()).children()[1]).html();
@@ -234,18 +260,43 @@ function enlargeJobApplication(clickedDiv) {
     var notes = $($($(clickedDiv).children()).children()[3]).html();
     var jobApplicationID = $($($(clickedDiv).children()).children()[4]).html();
     $(".delete-job-application-btn").val(jobApplicationID);
-    $("#enlarged-job-application-title").html(companyName + " - " + jobTitle);
+    $("#enlarged-job-application-company-name").val(companyName);
+    $("#enlarged-job-application-job-title").val(jobTitle);
     $("#enlarged-job-application-date-applied").html(dateApplied);
     $("#enlarged-job-application-notes").html(notes);
+    if (backgroundColor == "rgb(253, 242, 181)") {
+        $("#enlarged-job-application-status").html("Interested");
+    }
+    else if (backgroundColor == "rgb(168, 188, 253)") {
+        $("#enlarged-job-application-status").html("Applied");
+    }
+    else if (backgroundColor == "rgb(162, 247, 162)") {
+        $("#enlarged-job-application-status").html("Accepted");
+    }
+    else if (backgroundColor == "rgb(255, 164, 164)") {
+        $("#enlarged-job-application-status").html("Rejected");
+    }
+    $("#enlarged-job-application-status").css({
+        "color": backgroundColor
+    })
     $("#enlarged-job-application").css({
-        'display': 'block',
-        'background-color': backgroundColor
+        'display': 'block'
     });
 }
 
 function hideEnlargedJobApplication() {
     $("#enlarged-job-application").css({
         'display': 'none',
+    })
+}
+
+
+function showEnlargedAppDateSelect() {
+    $("#enlarged-job-application-date-applied").css({
+        'display': 'none'
+    })
+    $("#enlarged-job-application-date-select").css({
+        'display': 'block'
     })
 }
 
@@ -301,6 +352,7 @@ function validateNewJobApplication() {
     var column = $($("#new-" + form + "-job-application-form").children()[0]).val();
     var goodToPost = true;
 
+    /*
     // Make sure date not in the future (only check if date is not empty)
     if (dateApplied != "") {
         var today = new Date().toISOString().slice(0,10);
@@ -309,6 +361,8 @@ function validateNewJobApplication() {
             return showSubmissionErrorPopup($("input[name=dateApplied]"), "Cannot select date in the future!");
         }
     }
+    */
+
     // If date is empty (which happens when Interested column is selected), put in today's date
     if (dateApplied == "") {
         dateApplied = new Date();
@@ -430,7 +484,12 @@ socket.on('jobApplications', (jobApplications) => {
     var rejectedList = [];
     for (var i in jobApplications) {
         var d = new Date(jobApplications[i]["DateApplied"]);
-        jobApplications[i]["DateApplied"] = d.toDateString();
+        var month = d.getMonth() + 1;
+        var day = d.getDate();
+        var year = d.getFullYear();
+        var date = month + "/" + day + "/" + year;
+        jobApplications[i]["DateApplied"] = date;
+        console.log(date)
         if (jobApplications[i]["BoardColumn"] == "Interested") {
             interestedList.push(jobApplications[i]);
         } else if (jobApplications[i]["BoardColumn"] == "Applied") {
@@ -443,7 +502,6 @@ socket.on('jobApplications', (jobApplications) => {
             console.log("Bad column name.");
         }
     }
-    console.log(appliedList);
     // Render job applications in Interested column
     const interestedListTemplate = document.querySelector('#interested-list-template').innerHTML
     const interestedColumn = document.querySelector('#interested-column')
