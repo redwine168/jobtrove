@@ -186,22 +186,6 @@ function hideSubmissionErrorPopup() {
 }
 
 
-// Function for showing job application deletion popup
-function showJobApplicationDeletionPopup(btn) {
-    $("#delete-job-application-popup").offset($(btn).position());
-    $("#delete-job-application-btn-yes").val($(btn).val());
-    $("#delete-job-application-popup").css({
-        'display': 'block'
-    })
-}
-
-// Function for hiding job application deletion popup
-function hideJobApplicationDeletionPopup() {
-    $("#delete-job-application-popup").css({
-        'display': 'none'
-    })
-}
-
 
 // -----------------------------------------
 // ----- Job Application Drag and Drop -----
@@ -257,28 +241,39 @@ function enlargeJobApplication(clickedDiv) {
     var companyName = $($($(clickedDiv).children()).children()[0]).html();
     var jobTitle = $($($(clickedDiv).children()).children()[1]).html();
     var dateApplied = $($($(clickedDiv).children()).children()[2]).html();
+    var d = new Date(dateApplied);
     var notes = $($($(clickedDiv).children()).children()[3]).html();
     var jobApplicationID = $($($(clickedDiv).children()).children()[4]).html();
-    $(".delete-job-application-btn").val(jobApplicationID);
+    $("#delete-job-application-btn").val(jobApplicationID);
+    $("#enlarged-job-application-save-changes-btn").val(jobApplicationID);
     $("#enlarged-job-application-company-name").val(companyName);
     $("#enlarged-job-application-job-title").val(jobTitle);
-    $("#enlarged-job-application-date-applied").html(dateApplied);
+    $("#enlarged-job-application-date-applied").val(d.toISOString().slice(0,10));
     $("#enlarged-job-application-notes").html(notes);
     if (backgroundColor == "rgb(253, 242, 181)") {
-        $("#enlarged-job-application-status").html("Interested");
+        $("#enlarged-job-application-status").val("Interested");
     }
     else if (backgroundColor == "rgb(168, 188, 253)") {
-        $("#enlarged-job-application-status").html("Applied");
+        $("#enlarged-job-application-status").val("Applied");
     }
     else if (backgroundColor == "rgb(162, 247, 162)") {
-        $("#enlarged-job-application-status").html("Accepted");
+        $("#enlarged-job-application-status").val("Accepted");
     }
     else if (backgroundColor == "rgb(255, 164, 164)") {
-        $("#enlarged-job-application-status").html("Rejected");
+        $("#enlarged-job-application-status").val("Rejected");
     }
     $("#enlarged-job-application-status").css({
         "color": backgroundColor
     })
+
+    // Store original values at time of enlarging, used to see if edits have been made later
+    $("#original-company-name").val(companyName);
+    $("#original-job-title").val(jobTitle);
+    $("#original-date-applied").val(dateApplied);
+    $("#original-notes").val(notes);
+    $("#original-status").val($("#enlarged-job-application-status").val());
+
+    // Show enlarged job application
     $("#enlarged-job-application").css({
         'display': 'block'
     });
@@ -297,6 +292,93 @@ function showEnlargedAppDateSelect() {
     })
     $("#enlarged-job-application-date-select").css({
         'display': 'block'
+    })
+}
+
+
+function updateStatusColor() {
+    var status = $("#enlarged-job-application-status").val();
+    if (status == "Interested") {
+        $("#enlarged-job-application-status").css({"color": "rgb(253, 242, 181)"});
+    }
+    else if (status == "Applied") {
+        $("#enlarged-job-application-status").css({"color": "rgb(168, 188, 253)"});
+    }
+    else if (status == "Accepted") {
+        $("#enlarged-job-application-status").css({"color": "rgb(162, 247, 162)"});
+    }
+    else if (status == "Rejected") {
+        $("#enlarged-job-application-status").css({"color": "rgb(255, 164, 164)"});
+    }
+    // See if edits are made (will pretty much just check if status was changed)
+    determineIfEditsMade();
+}
+
+
+function determineIfEditsMade() {
+    originalCompanyName = $("#original-company-name").val();
+    originalJobTitle = $("#original-job-title").val();
+    originalDateApplied = new Date($("#original-date-applied").val()).toISOString().slice(0,10);
+    originalNotes = $("#original-notes").val();
+    originalStatus = $("#original-status").val();
+
+    // Check company name
+    var sameCompanyName = true;
+    if ($("#enlarged-job-application-company-name").val() != originalCompanyName) {
+        sameCompanyName = false;
+    }
+
+    // Check job title
+    var sameJobTitle = true;
+    if ($("#enlarged-job-application-job-title").val() != originalJobTitle) {
+        sameJobTitle = false;
+    }
+
+    // Check date applied
+    var sameDateApplied = true;
+    var thisDateApplied = new Date($("#enlarged-job-application-date-applied").val()).toISOString().slice(0,10);
+    if (thisDateApplied != originalDateApplied) {
+        console.log("different date")
+        sameDateApplied = false;
+    }
+
+    // Check status (column)
+    var sameStatus = true;
+    if ($("#enlarged-job-application-status").val() != originalStatus) {
+        sameStatus = false;
+    }
+
+    // Check notes
+    var sameNotes = true;
+    if ($("#enlarged-job-application-notes").val() != originalNotes) {
+        sameNotes = false;
+    }
+
+    // If all inputs have the same value as original, show OK button
+    if (sameCompanyName && sameJobTitle && sameDateApplied && sameStatus && sameNotes) {
+        showOKButton();
+    }
+    // Otherwise, show Save Changes button
+    else {
+        showSaveChangesButton();
+    }
+}
+
+function showOKButton() {
+    $("#enlarged-job-application-save-changes-btn").css({
+        "display": "none"
+    })
+    $("#enlarged-job-application-ok-btn").css({
+        "display": "inline-block"
+    })
+}
+
+function showSaveChangesButton() {
+    $("#enlarged-job-application-ok-btn").css({
+        "display": "none"
+    })
+    $("#enlarged-job-application-save-changes-btn").css({
+        "display": "inline-block"
     })
 }
 
@@ -416,7 +498,6 @@ function deleteJobApplication(btn) {
         },
         success: function(result) {
             //console.log(result.message);
-            hideJobApplicationDeletionPopup();
             hideEnlargedJobApplication();
             // Emit a homepage refresh request to get updated list of job applications
             socket.emit('board-refresh-request', {userID}, (error) => {
@@ -430,7 +511,51 @@ function deleteJobApplication(btn) {
 }
 
 
-// Update Job Application column
+// Function for updating Job Application (occurs when changes are made on enlarged job application)
+function updateJobApplication() {
+    var jobApplicationID = $("#delete-job-application-btn").val();
+    var companyName = $("#enlarged-job-application-company-name").val();
+    var jobTitle = $("#enlarged-job-application-job-title").val();
+    var dateApplied = $("#enlarged-job-application-date-applied").val();
+    var column = $("#enlarged-job-application-status").val();
+    var notes = $("#enlarged-job-application-notes").val();
+
+    // Do a final shift of time to make sure dates are stored in database at 12:00:00 UTC
+    dateApplied = new Date(dateApplied)
+    dateApplied.setHours(12,0,0,0);
+    dateApplied = new Date(dateApplied.getTime() - dateApplied.getTimezoneOffset() * 60000);
+    // Put date in format good for database
+    dateApplied = dateApplied.toISOString();
+
+    // AJAX call to server
+    $.ajax({
+        type: 'POST',
+        url: '/updateJobApplication',
+        data: {
+            "jobApplicationID": jobApplicationID,
+            "companyName": companyName,
+            "jobTitle": jobTitle,
+            "dateApplied": dateApplied,
+            "column": column,
+            "notes": notes
+        },
+        success: function(result) {
+            //console.log(result.message);
+            hideEnlargedJobApplication();
+            // Emit a homepage refresh request to get updated list of job applications
+            socket.emit('board-refresh-request', {userID}, (error) => {
+                if (error) {
+                    alert(error)
+                    location.href = '/home'
+                }
+            })
+
+        }
+    })
+}
+
+
+// Update Job Application column (occurs during drag and drop)
 function updateJobApplicationColumn(jobApplicationID, destColumn) {
     var goodToPost = true;
     if (destColumn == "interested-column") {
@@ -489,7 +614,6 @@ socket.on('jobApplications', (jobApplications) => {
         var year = d.getFullYear();
         var date = month + "/" + day + "/" + year;
         jobApplications[i]["DateApplied"] = date;
-        console.log(date)
         if (jobApplications[i]["BoardColumn"] == "Interested") {
             interestedList.push(jobApplications[i]);
         } else if (jobApplications[i]["BoardColumn"] == "Applied") {

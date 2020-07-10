@@ -271,6 +271,35 @@ app.post('/deleteJobApplication', function(request, response) {
 });
 
 
+app.post('/updateJobApplication', function(request, response) {
+    // Get input info
+    var jobApplicationID = request.body.jobApplicationID; 
+    var companyName = request.body.companyName; 
+    var jobTitle = request.body.jobTitle; 
+    var dateApplied = request.body.dateApplied; 
+    var column = request.body.column; 
+    var notes = request.body.notes;
+    // open db connection
+    sql.connect(config, function(err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('jobApplicationID', sql.Int, jobApplicationID);
+        dbConnection.input('companyName', sql.VarChar, companyName);
+        dbConnection.input('jobTitle', sql.VarChar, jobTitle);
+        dbConnection.input('dateApplied', sql.VarChar, dateApplied);
+        dbConnection.input('column', sql.VarChar, column);
+        dbConnection.input('notes', sql.VarChar, notes);
+        var sql_updateJobApplication = "UPDATE JobApplications SET CompanyName=@companyName, JobTitle=@jobTitle, DateApplied=@dateApplied, BoardColumn=@column, Notes=@notes WHERE ID=@jobApplicationID";
+        // execute query
+        dbConnection.query(sql_updateJobApplication).then(function(updateResults) {
+            response.send({message: "Job Application updated successfully!"});
+        })
+    })
+})
+
+
+// Function for handling the update of a Job App column, which occurs from a drag and drop
 app.post('/updateJobApplicationColumn', function(request, response) {
     // Get input info
     var jobApplicationID = request.body.jobApplicationID;

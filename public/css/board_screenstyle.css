@@ -84,10 +84,8 @@
     left: 28%;
     right: 28%;
     padding: 5px;
-    border: 5px solid black;
     border-radius: 5px;
     color: white;
-    background-color: rgb(39, 39, 39);
     text-align: center;
     z-index: 10;
     font-size: 12pt;
@@ -103,13 +101,15 @@
 }
 
 #enlarged-job-application-company-name {
-    background-color: rgb(80,80,80);
+    background-color: #0b5291;
     color: white;
     outline: none;
-    border: 1px solid rgb(80,80,80);
+    border: 1px solid #0b5291;
+    border-radius: 20px;
     text-align: center;
-    font-size: 16pt;
+    font-size: 20pt;
     width: 75%;
+    cursor: pointer;
 }
 
 #enlarged-job-application-company-name:hover {
@@ -118,19 +118,22 @@
 }
 
 #enlarged-job-application-company-name:focus {
-    background-color: rgb(100,100,100);
+    background-color: #14a2ce;
     border: 1px solid white;
     border-radius: 20px;
+    cursor: text;
 }
 
 #enlarged-job-application-job-title {
-    background-color: rgb(80,80,80);
+    background-color: #0b5291;
     color: white;
     outline: none;
-    border: 1px solid rgb(80,80,80);
+    border: 1px solid #0b5291;
+    border-radius: 20px;
     text-align: center;
-    font-size: 14pt;
+    font-size: 18pt;
     width: 75%;
+    cursor: pointer;
 }
 
 #enlarged-job-application-job-title:hover {
@@ -139,17 +142,24 @@
 }
 
 #enlarged-job-application-job-title:focus {
-    background-color: rgb(100,100,100);
+    background-color: #14a2ce;
     border: 1px solid white;
     border-radius: 20px;
+    cursor: text;
 }
 
 #enlarged-job-application-date-applied {
-    padding: 5px;
+    outline: none;
+    background-color: transparent;
+    color: white;
+    padding: 7px;
     cursor: text;
-    width: 100%;
-    border: 1px solid rgb(39, 39, 39);
-    text-align: center;
+    width: 60%;
+    left: 20%;
+    right: 20%;
+    border: 1px solid transparent;
+    text-align: right;
+    cursor: pointer;
 }
 
 #enlarged-job-application-date-applied:hover {
@@ -157,8 +167,28 @@
     border-radius: 20px;
 }
 
+::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+#enlarged-job-application-status {
+    outline: none;
+    background-color: transparent;
+    padding: 7px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+#enlarged-job-application-status:hover {
+    border: 1px solid white;
+    border-radius: 20px;
+}
+
 #enlarged-job-application-notes {
-    padding: 2px;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
     width: 100%;
     color: white;
     background-color: rgb(39, 39, 39);
@@ -166,26 +196,15 @@
     border-radius: 5px;
     outline: none;
     resize: none;
+    cursor: pointer;
 }
 
-.delete-job-application-btn {
-    float: right;
-    margin-right: 10px;
-    color: white;
-    background-color: red;
-    border: 1px solid white;
-    border-radius: 50px;
+#enlarged-job-application-notes:focus {
+    cursor: text;
 }
 
-.delete-job-application-popup {
+#enlarged-job-application-save-changes-btn {
     display: none;
-    position: fixed;
-    max-width: 100px;
-    border: 2px solid red;
-    background: #c74242;
-    z-index: 10;
-    text-align: center;
-    z-index: 11;
 }
 
 /* Button used to open the Create New Job form - fixed at the bottom of the page */
