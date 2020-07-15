@@ -127,8 +127,10 @@ app.get('/profile', function(request, response) {
 // GET for To-Do List page
 app.get('/to-do', function(request, response) {
     var userID = request.session.userID;
+    var username = request.session.username;
     response.render(publicDirectoryPath + 'views/to-do.html', {
-        userID: userID
+        userID: userID,
+        username: username
     })
 })
 
@@ -384,6 +386,61 @@ app.post('/deleteSkill', function(request, response) {
 })
 
 
+app.post('/insertToDoTask', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var taskName = request.body.taskName;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('taskName', sql.VarChar, taskName);
+        var sql_insertToDoTask = "INSERT INTO ToDoTasks(UserID,TaskName,Completed) VALUES (@userID,@taskName,0)";
+        dbConnection.query(sql_insertToDoTask).then(function(results) {
+            response.send({message: "To Do Task created successfully!"});
+        })
+    })
+})
+
+
+app.post('/updateToDoTask', function(request, response) {
+    // Get input info
+    var taskID = request.body.taskID;
+    var destination = request.body.destination;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('taskID', sql.Int, taskID);
+        dbConnection.input('destination', sql.Int, destination);
+        var sql_updateToDoTask = "UPDATE ToDoTasks SET Completed=@destination WHERE ID=@taskID";
+        dbConnection.query(sql_updateToDoTask).then(function(results) {
+            response.send({message: "To Do Task updated successfully!"});
+        })
+    })
+})
+
+
+app.post('/deleteToDoTask', function(request, response) {
+    // Get input info
+    var taskID = request.body.taskID;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('taskID', sql.Int, taskID);
+        var sql_deleteToDoTask = "DELETE FROM ToDoTasks WHERE ID=@taskID";
+        dbConnection.query(sql_deleteToDoTask).then(function(results) {
+            response.send({message: "To Do Task updated successfully!"});
+        })
+    })
+})
+
+
 // ----------------------------
 // ----- Navigation POSTs -----
 // ----------------------------
@@ -407,10 +464,11 @@ app.post('/navToBoardPage', function(request, response) {
 
 
 app.post('/navToToDoListPage', function(request, response) {
-    console.log("Trying to nav to To-Do")
     var userID = request.body.userID;
+    var username = request.body.username;
     request.session.loggedin = true;
     request.session.userID = userID;
+    request.session.username = username;
     response.send({redirect: '/to-do'})
 })
 
@@ -441,7 +499,7 @@ io.on('connection', (socket) => {
             dbConnection.input('userID', sql.Int, userID);
             var sql_getJobApplications = 'SELECT * FROM JobApplications WHERE UserID=@userID ORDER BY DateApplied DESC';
             dbConnection.query(sql_getJobApplications).then(function(results) {
-                io.to(room).emit('jobApplications', results.recordset);
+                io.to(room).emit('job-applications', results.recordset);
             })
         })
     })
@@ -458,9 +516,27 @@ io.on('connection', (socket) => {
             // Initialize connection and parameters
             var dbConnection = new sql.Request();
             dbConnection.input('userID', sql.Int, userID);
-            var sql_getJobApplications = 'SELECT * FROM Users WHERE ID=@userID';
-            dbConnection.query(sql_getJobApplications).then(function(results) {
+            var sql_getSkills = 'SELECT * FROM Users WHERE ID=@userID';
+            dbConnection.query(sql_getSkills).then(function(results) {
                 io.to(room).emit('skills', results.recordset[0]["Skills"]);
+            })
+        })
+    })
+
+    // When a user requests a refresh to their To-Do List page
+    socket.on('to-do-list-refresh-request', (userInfo, callback) => {
+        var userID = userInfo.userID;
+        var room = 'todo' + userID;
+        socket.join(room);
+        // open db connection
+        sql.connect(config, function(err) {
+            if (err) console.log(err);
+            // Initialize connection and parameters
+            var dbConnection = new sql.Request();
+            dbConnection.input('userID', sql.Int, userID);
+            var sql_getToDoTasks = 'SELECT * FROM ToDoTasks WHERE UserID=@userID';
+            dbConnection.query(sql_getToDoTasks).then(function(results) {
+                io.to(room).emit('to-do-tasks', results.recordset);
             })
         })
     })

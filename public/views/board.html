@@ -25,7 +25,7 @@
                 </div>
             </div>
             <button class="btn btn-info navbar-btn" type="button" onclick="navToBoardPage()">Job App Board</button>
-            <button class="btn btn-info navbar-btn" type="button">To-Do List</button>
+            <button class="btn btn-info navbar-btn" type="button" onclick="navToToDoListPage()">To-Do List</button>
         </nav>
 
 
@@ -55,7 +55,7 @@
                             <select id="enlarged-job-application-status" onchange="updateStatusColor()">
                                 <option value="Interested" style="color:rgb(253, 242, 181);">Interested</option>
                                 <option value="Applied" style="color:rgb(168, 188, 253);">Applied</option>
-                                <option value="Accepted" style="color:rgb(162, 247, 162);">Accepted</option>
+                                <option value="Interviewing" style="color:rgb(162, 247, 162);">Interviewing</option>
                                 <option value="Rejected" style="color:rgb(255, 164, 164);">Rejected</option>
                             </select>
                         </div>
@@ -94,7 +94,7 @@
 
                 <div class="col-sm-3" ondragover="onDragOver(event)" ondrop="onDrop(event)">
                     <div class="card-box h-100">
-                        <ul class="sortable-list taskList list-unstyled ui-sortable board-column" id="accepted-column"></ul>
+                        <ul class="sortable-list taskList list-unstyled ui-sortable board-column" id="interviewing-column"></ul>
                     </div>
                 </div>
 
@@ -118,7 +118,7 @@
                 <div class="job-application-card-body">
                     <p class="card-company-name">{{CompanyName}}</p>
                     <p class="card-job-title">{{JobTitle}}</p>
-                    <p class="card-date-applied"></p>
+                    <p class="card-date-applied" hidden>{{DateApplied}}</p>
                     <p class="card-notes" hidden>{{Notes}}</p>
                     <p hidden>{{ID}}</p>
                 </div>
@@ -165,10 +165,10 @@
                 </form>
             </div>
         </script>
-        <script id="accepted-list-template" type="text/html">
-            <h4 class="header-title board-column-title">Accepted</h4>
-            {{#acceptedList}}
-            <div class="job-application-card" id="accepted-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
+        <script id="interviewing-list-template" type="text/html">
+            <h4 class="header-title board-column-title">Interviewing</h4>
+            {{#interviewingList}}
+            <div class="job-application-card" id="interviewing-job-application" draggable="true" ondragstart="onDragStart(event)" onclick="enlargeJobApplication(this)">
                 <div class="job-application-card-body">
                     <p class="card-company-name">{{CompanyName}}</p>
                     <p class="card-job-title">{{JobTitle}}</p>
@@ -177,11 +177,11 @@
                     <p hidden>{{ID}}</p>
                 </div>
             </div>
-            {{/acceptedList}}
-            <div id="new-accepted-job-application-btn" class="job-application-card new-job-application-btn" onclick="openNewJobApplicationForm(this)">Add Card +</div>
-            <div class="job-application-card new-job-application-form-container" id="new-accepted-job-application-form-container">
-                <form action="javascript:validateNewJobApplication()" class="new-job-application-form" id="new-accepted-job-application-form">
-                    <input type="hidden" value="Accepted" name="columnSelection">
+            {{/interviewingList}}
+            <div id="new-interviewing-job-application-btn" class="job-application-card new-job-application-btn" onclick="openNewJobApplicationForm(this)">Add Card +</div>
+            <div class="job-application-card new-job-application-form-container" id="new-interviewing-job-application-form-container">
+                <form action="javascript:validateNewJobApplication()" class="new-job-application-form" id="new-interviewing-job-application-form">
+                    <input type="hidden" value="Interviewing" name="columnSelection">
                     <input type="text" placeholder="Enter Company Name" name="companyName" maxlength="30" autocomplete="off" required>
                     <input type="text" placeholder="Enter Job Title" name="jobTitle" maxlength="30" autocomplete="off" required>
                     <textarea class="notes" maxlength="255" rows="2" placeholder="Notes"></textarea>
@@ -229,7 +229,6 @@
         <script>
                 var username = "<%= username %>";
                 var userID = "<%= userID %>";
-                var imagePath = "<%= imagePath %>";
                 $("#username-dropdown-button").html(username);
                 $('#userID').val(userID);
         </script>

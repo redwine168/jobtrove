@@ -46,15 +46,15 @@ function openNewJobApplicationForm(clickedBtn) {
         })
         $("#current-open-form").val("applied")
     }
-    else if (btnID == "new-accepted-job-application-btn") {
-        $($("#new-accepted-job-application-form").children()[4]).val(currentDate);
-        $("#new-accepted-job-application-btn").css({
+    else if (btnID == "new-interviewing-job-application-btn") {
+        $($("#new-interviewing-job-application-form").children()[4]).val(currentDate);
+        $("#new-interviewing-job-application-btn").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form-container").css({
+        $("#new-interviewing-job-application-form-container").css({
             'display': 'block'
         })
-        $("#current-open-form").val("accepted")
+        $("#current-open-form").val("interviewing")
     }
     else if (btnID == "new-rejected-job-application-btn") {
         $($("#new-rejected-job-application-form").children()[4]).val(currentDate);
@@ -106,7 +106,7 @@ function closeOtherJobApplicationForms(btnID) {
         $("#new-applied-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form-container").css({
+        $("#new-interviewing-job-application-form-container").css({
             'display': 'none'
         })
         $("#new-rejected-job-application-form-container").css({
@@ -118,14 +118,14 @@ function closeOtherJobApplicationForms(btnID) {
         $("#new-interested-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form-container").css({
+        $("#new-interviewing-job-application-form-container").css({
             'display': 'none'
         })
         $("#new-rejected-job-application-form-container").css({
             'display': 'none'
         })
     }
-    else if (btnID == "new-accepted-job-application-btn") {
+    else if (btnID == "new-interviewing-job-application-btn") {
         // Hide other forms
         $("#new-interested-job-application-form-container").css({
             'display': 'none'
@@ -145,7 +145,7 @@ function closeOtherJobApplicationForms(btnID) {
         $("#new-applied-job-application-form-container").css({
             'display': 'none'
         })
-        $("#new-accepted-job-application-form-container").css({
+        $("#new-interviewing-job-application-form-container").css({
             'display': 'none'
         })
     }
@@ -248,7 +248,9 @@ function enlargeJobApplication(clickedDiv) {
     $("#enlarged-job-application-save-changes-btn").val(jobApplicationID);
     $("#enlarged-job-application-company-name").val(companyName);
     $("#enlarged-job-application-job-title").val(jobTitle);
-    $("#enlarged-job-application-date-applied").val(d.toISOString().slice(0,10));
+    if (dateApplied != "") {
+        $("#enlarged-job-application-date-applied").val(d.toISOString().slice(0,10));
+    }
     $("#enlarged-job-application-notes").html(notes);
     if (backgroundColor == "rgb(253, 242, 181)") {
         $("#enlarged-job-application-status").val("Interested");
@@ -257,7 +259,7 @@ function enlargeJobApplication(clickedDiv) {
         $("#enlarged-job-application-status").val("Applied");
     }
     else if (backgroundColor == "rgb(162, 247, 162)") {
-        $("#enlarged-job-application-status").val("Accepted");
+        $("#enlarged-job-application-status").val("Interviewing");
     }
     else if (backgroundColor == "rgb(255, 164, 164)") {
         $("#enlarged-job-application-status").val("Rejected");
@@ -280,6 +282,7 @@ function enlargeJobApplication(clickedDiv) {
 }
 
 function hideEnlargedJobApplication() {
+    showOKButton();
     $("#enlarged-job-application").css({
         'display': 'none',
     })
@@ -304,7 +307,7 @@ function updateStatusColor() {
     else if (status == "Applied") {
         $("#enlarged-job-application-status").css({"color": "rgb(168, 188, 253)"});
     }
-    else if (status == "Accepted") {
+    else if (status == "Interviewing") {
         $("#enlarged-job-application-status").css({"color": "rgb(162, 247, 162)"});
     }
     else if (status == "Rejected") {
@@ -316,11 +319,14 @@ function updateStatusColor() {
 
 
 function determineIfEditsMade() {
-    originalCompanyName = $("#original-company-name").val();
-    originalJobTitle = $("#original-job-title").val();
-    originalDateApplied = new Date($("#original-date-applied").val()).toISOString().slice(0,10);
-    originalNotes = $("#original-notes").val();
-    originalStatus = $("#original-status").val();
+    var originalCompanyName = $("#original-company-name").val();
+    var originalJobTitle = $("#original-job-title").val();
+    var originalDateApplied = new Date().toISOString().slice(0,10);
+    if ($("#original-date-applied").val() != "") {
+        originalDateApplied = new Date($("#original-date-applied").val()).toISOString().slice(0,10);
+    }
+    var originalNotes = $("#original-notes").val();
+    var originalStatus = $("#original-status").val();
 
     // Check company name
     var sameCompanyName = true;
@@ -410,6 +416,24 @@ function navToBoardPage() {
     $.ajax({
         type: 'POST',
         url: '/navToBoardPage',
+        data: {
+            "userID": userID,
+            "username": username
+        },
+        success: function(result) {
+            if (typeof result.redirect == 'string') {
+                window.location = result.redirect;
+            }
+        }
+    })
+}
+
+
+// Function for navigation to To-Do List Page
+function navToToDoListPage() {
+    $.ajax({
+        type: 'POST',
+        url: '/navToToDoListPage',
         data: {
             "userID": userID,
             "username": username
@@ -541,6 +565,7 @@ function updateJobApplication() {
         },
         success: function(result) {
             //console.log(result.message);
+            showOKButton();
             hideEnlargedJobApplication();
             // Emit a homepage refresh request to get updated list of job applications
             socket.emit('board-refresh-request', {userID}, (error) => {
@@ -562,8 +587,8 @@ function updateJobApplicationColumn(jobApplicationID, destColumn) {
         destColumn = "Interested"
     } else if (destColumn == "applied-column") {
         destColumn = "Applied"
-    } else if (destColumn == "accepted-column") {
-        destColumn = "Accepted"
+    } else if (destColumn == "interviewing-column") {
+        destColumn = "Interviewing"
     } else if (destColumn == "rejected-column") {
         destColumn = "Rejected"
     } else {
@@ -602,10 +627,10 @@ function updateJobApplicationColumn(jobApplicationID, destColumn) {
 // -------------------------
 
 // When the server sends list of job applications to the user
-socket.on('jobApplications', (jobApplications) => {
+socket.on('job-applications', (jobApplications) => {
     var interestedList = [];
     var appliedList = [];
-    var acceptedList = [];
+    var interviewingList = [];
     var rejectedList = [];
     for (var i in jobApplications) {
         var d = new Date(jobApplications[i]["DateApplied"]);
@@ -618,8 +643,8 @@ socket.on('jobApplications', (jobApplications) => {
             interestedList.push(jobApplications[i]);
         } else if (jobApplications[i]["BoardColumn"] == "Applied") {
             appliedList.push(jobApplications[i]);
-        } else if (jobApplications[i]["BoardColumn"] == "Accepted") {
-            acceptedList.push(jobApplications[i]);
+        } else if (jobApplications[i]["BoardColumn"] == "Interviewing") {
+            interviewingList.push(jobApplications[i]);
         } else if (jobApplications[i]["BoardColumn"] == "Rejected") {
             rejectedList.push(jobApplications[i]);
         } else {
@@ -642,13 +667,13 @@ socket.on('jobApplications', (jobApplications) => {
     })
     appliedColumn.innerHTML = appliedHtml;
 
-    // Render job applications in Accepted column
-    const acceptedListTemplate = document.querySelector('#accepted-list-template').innerHTML
-    const acceptedColumn = document.querySelector('#accepted-column')
-    const acceptedHtml = Mustache.render(acceptedListTemplate, {
-        acceptedList
+    // Render job applications in Interviewing column
+    const interviewingListTemplate = document.querySelector('#interviewing-list-template').innerHTML
+    const interviewingColumn = document.querySelector('#interviewing-column')
+    const interviewingHtml = Mustache.render(interviewingListTemplate, {
+        interviewingList
     })
-    acceptedColumn.innerHTML = acceptedHtml;
+    interviewingColumn.innerHTML = interviewingHtml;
     
     // Render job applications in Rejected column
     const rejectedListTemplate = document.querySelector('#rejected-list-template').innerHTML

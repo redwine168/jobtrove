@@ -4,15 +4,100 @@
     <head>
         <title>Trove</title>
         <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" href="/img/trove.png">
         <link rel="stylesheet" href="/css/screenstyle.css">
-        <link rel="stylesheet" href="/css/profile_screenstyle.css">
+        <link rel="stylesheet" href="/css/to-do_screenstyle.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     </head>
 
-    <body>
-        
+    <body style="background-image:url(/img/ocean.jpeg);">
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="margin-bottom:20px">
+            <a class="navbar-brand" href="/">
+                <img src="/img/trove.png" width="30" height="30" style="display:inline">
+                Trove
+            </a>
+            <div class="dropdown">
+                <button class="btn btn-info dropdown-toggle navbar-btn" type="button" id="username-dropdown-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                <div class="dropdown-menu" aria-labelledby="username-dropdown-button">
+                    <a class="dropdown-item" style="cursor:pointer;" onclick="navToUserProfilePage()">Edit Profile</a>
+                    <a class="dropdown-item" href="#">Sign Out</a>
+                </div>
+            </div>
+            <button class="btn btn-info navbar-btn" type="button" onclick="navToBoardPage()">Job App Board</button>
+            <button class="btn btn-info navbar-btn" type="button" onclick="navToToDoListPage()">To-Do List</button>
+        </nav>
 
+        <!-- To-Do List -->
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="to-do-list-container not-completed">
+                        <h1>To-Do</h1>
+                        <ul id="to-do-tasks" class="list-unstyled to-do-list"></ul>
+                        <div class="to-do-footer">
+                            <strong><span class="to-do-tasks-count"></span></strong> Remaining Tasks
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="to-do-list-container completed">
+                     <h1>Completed</h1>
+                        <ul id="completed-tasks" class="list-unstyled to-do-list"></ul>
+                        <div class="to-do-footer">
+                            <strong><span class="completed-tasks-count"></span></strong> Completed Tasks
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Important Hidden Info -->
+        <input type="hidden" id="userID">
+
+        <!-- Mustache script templates -->
+        <script id="to-do-list-template" type="text/html">
+            {{#toDoList}}
+            <li class="to-do-task">
+                <button type="button" class="close" aria-label="Close" style="padding-right:5px;color:red;" onclick="deleteTask(this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <label><input type="checkbox" class="to-do-task-checkbox" value="" />{{TaskName}}</label>
+                <p class="taskID" hidden>{{ID}}</p>
+            </li>
+            {{/toDoList}}
+            <li class="to-do-task">
+                <form id="new-task-form" action="javascript:addTask()">
+                    <input type="text" class="add-task-input" maxlength="50" placeholder="Add Task">
+                    <input type="submit" style="display:none;">
+                </form>
+            </li>
+        </script>
+        <script id="completed-list-template" type="text/html">
+            {{#completedList}}
+            <li class="to-do-task">
+                <button type="button" class="close" aria-label="Close" style="padding-right:5px;color:red;" onclick="deleteTask(this)">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <label><input type="checkbox" class="to-do-task-checkbox" value="" checked/>{{TaskName}}</label>
+                <p class="taskID" hidden>{{ID}}</p>
+            </li>
+            {{/completedList}}
+        </script>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.0.4/popper.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script>
+            var username = "<%= username %>";
+            var userID = "<%= userID %>";
+            $("#username-dropdown-button").html(username);
+            $('#userID').val(userID);
+        </script>
         <script src="../js/to-do.js"></script>
     </body>
 </html>

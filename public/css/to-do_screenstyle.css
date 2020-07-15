@@ -1,0 +1,44 @@
+
+
+.to-do-list-container{
+    background-color: darkslategray;
+    color: white;
+    padding: 20px 20px 10px 20px;
+    margin-top: 30px;
+    height: 80vh;
+}
+
+.to-do-list-container h1{
+    margin: 0;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.to-do-list {
+    height: 75%;
+    overflow: scroll;
+}
+
+.to-do-task {
+    width: 100%;
+    margin: 3px 0px 3px 0px;
+    color: black;
+    background-color: #fff;
+    border: 2px solid black;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 85%;
+}
+
+.to-do-task-checkbox {
+    margin: 0px 5px 0px 5px;
+}
+
+.add-task-input {
+    width: 100%;
+}
+
+.to-do-footer{
+    padding: 10px 20px;
+    float: bottom;
+}
