@@ -35,7 +35,7 @@
                 <div class="col-md-6">
                     <div class="to-do-list-container not-completed">
                         <h1>To-Do</h1>
-                        <ul id="to-do-tasks" class="list-unstyled to-do-list" ondragover="onDragOver(event)" ondrop="onDrop(event)"></ul>
+                        <ul id="to-do-tasks" class="list-unstyled to-do-list"></ul>
                         <div class="to-do-footer">
                             <strong><span class="to-do-tasks-count"></span></strong> Remaining Tasks
                         </div>
@@ -44,7 +44,7 @@
                 <div class="col-md-6">
                     <div class="to-do-list-container completed">
                      <h1>Completed</h1>
-                        <ul id="completed-tasks" class="list-unstyled to-do-list" ondragover="onDragOver(event)" ondrop="onDrop(event)"></ul>
+                        <ul id="completed-tasks" class="list-unstyled to-do-list"></ul>
                         <div class="to-do-footer">
                             <strong><span class="completed-tasks-count"></span></strong> Completed Tasks
                         </div>
@@ -60,7 +60,7 @@
         <!-- Mustache script templates -->
         <script id="to-do-list-template" type="text/html">
             {{#toDoList}}
-            <li class="to-do-task" draggable="true" ondragstart="onDragStart(event)">
+            <li class="to-do-task" draggable="true">
                 <button type="button" class="close" aria-label="Close" style="padding-right:5px;color:red;" onclick="deleteTask(this)">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -78,7 +78,7 @@
         </script>
         <script id="completed-list-template" type="text/html">
             {{#completedList}}
-            <li class="to-do-task" ondragstart="onDragStart(event)">
+            <li class="to-do-task">
                 <button type="button" class="close" aria-label="Close" style="padding-right:5px;color:red;" onclick="deleteTask(this)">
                     <span aria-hidden="true">&times;</span>
                 </button>

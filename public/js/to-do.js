@@ -7,14 +7,18 @@ username = $("#username-dropdown-button").html();
 
 $("#to-do-tasks").sortable({ 
     items: "> li:not(:last)",
-    update: function() {
-        updateToDoListOrderAfterSort()
-    }
+    update: function(event, object) {
+        var draggedTaskID = $(object.item[0]).find(".taskID").html();
+        updateToDoListOrderAfterSort(draggedTaskID)
+    },
+    connectWith: ".to-do-list"
 });
 $("#completed-tasks").sortable({
-    update: function() {
-        updateToDoListOrderAfterSort()
-    }
+    update: function(event, object) {
+        var draggedTaskID = $(object.item[0]).find(".taskID").html();
+        updateToDoListOrderAfterSort(draggedTaskID)
+    },
+    connectWith: ".to-do-list"
 });
 
 
@@ -64,7 +68,7 @@ function countCompletedTasks(){
 }
 
 
-function updateToDoListOrderAfterSort() {
+function updateToDoListOrderAfterSort(draggedTaskID) {
     var currToDoOrder = [];
     var currCompletedOrder = [];
     $('#to-do-tasks li').each(function() {
@@ -82,6 +86,12 @@ function updateToDoListOrderAfterSort() {
     var newCompletedOrder = currCompletedOrder.join().toString();
     updateToDoListOrder("ToDoOrder", newToDoOrder);
     updateToDoListOrder("CompletedOrder", newCompletedOrder);
+    // Update the dragged task to ensure correct column assigned in ToDoTasks table
+    if (newToDoOrder.includes(draggedTaskID)) {
+        updateToDoTaskAfterSort(draggedTaskID, 0);
+    } else {
+        updateToDoTaskAfterSort(draggedTaskID, 1);
+    }
 }
 
 
@@ -227,18 +237,21 @@ function updateToDoTask(taskID, destination) {
             var newCompletedOrder = currCompletedOrder.join().toString();
             updateToDoListOrder("ToDoOrder", newToDoOrder);
             updateToDoListOrder("CompletedOrder", newCompletedOrder);
+            
         }
     })
 }
 
 
-// Function for deleting a To Do List Task
-function deleteToDoTask(taskID) {
+// Function for updating a To Do List task after a sort
+function updateToDoTaskAfterSort(taskID, destination) {
+    $("#currentTaskID").val(taskID);
     $.ajax({
         type: 'POST',
-        url: '/deleteToDoTask',
+        url: '/updateToDoTask',
         data: {
-            "taskID": taskID
+            "taskID": taskID,
+            "destination": destination
         },
         success: function(result) {
             //console.log(result.message);
@@ -249,6 +262,25 @@ function deleteToDoTask(taskID) {
                     location.href = '/to-do'
                 }
             })
+        }
+    })
+}
+
+
+// Function for deleting a To Do List Task
+function deleteToDoTask(taskID) {
+    $("#currentTaskID").val(taskID);
+    $.ajax({
+        type: 'POST',
+        url: '/deleteToDoTask',
+        data: {
+            "taskID": taskID
+        },
+        success: function(result) {
+            //console.log(result.message);
+            // Emit a refresh request to get updated list of tasks
+            
+            var taskID = $("#currentTaskID").val();
             var currToDoOrder = [];
             var currCompletedOrder = [];
             $('#to-do-tasks li').each(function() {
@@ -267,8 +299,8 @@ function deleteToDoTask(taskID) {
                 var column = "ToDoOrder";
                 var newOrder = currToDoOrder.join().toString();
             } else {
-                var i = currToDoOrder.indexOf(taskID);
-                currToDoOrder.splice(i, 1);
+                var i = currCompletedOrder.indexOf(taskID);
+                currCompletedOrder.splice(i, 1);
                 var column = "CompletedOrder";
                 var newOrder = currCompletedOrder.join().toString();
             }
@@ -280,7 +312,6 @@ function deleteToDoTask(taskID) {
 
 // Function for updating the order of one of the To Do Lists
 function updateToDoListOrder(column, newOrder) {
-    console.log(column, newOrder);
     $.ajax({
         type: 'POST',
         url: '/updateToDoListOrder',
