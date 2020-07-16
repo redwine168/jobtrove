@@ -35,7 +35,7 @@
                 <div class="col-md-6">
                     <div class="to-do-list-container not-completed">
                         <h1>To-Do</h1>
-                        <ul id="to-do-tasks" class="list-unstyled to-do-list"></ul>
+                        <ul id="to-do-tasks" class="list-unstyled to-do-list" ondragover="onDragOver(event)" ondrop="onDrop(event)"></ul>
                         <div class="to-do-footer">
                             <strong><span class="to-do-tasks-count"></span></strong> Remaining Tasks
                         </div>
@@ -44,7 +44,7 @@
                 <div class="col-md-6">
                     <div class="to-do-list-container completed">
                      <h1>Completed</h1>
-                        <ul id="completed-tasks" class="list-unstyled to-do-list"></ul>
+                        <ul id="completed-tasks" class="list-unstyled to-do-list" ondragover="onDragOver(event)" ondrop="onDrop(event)"></ul>
                         <div class="to-do-footer">
                             <strong><span class="completed-tasks-count"></span></strong> Completed Tasks
                         </div>
@@ -55,19 +55,21 @@
 
         <!-- Important Hidden Info -->
         <input type="hidden" id="userID">
+        <input type="hidden" id="currentTaskID">
 
         <!-- Mustache script templates -->
         <script id="to-do-list-template" type="text/html">
             {{#toDoList}}
-            <li class="to-do-task">
+            <li class="to-do-task" draggable="true" ondragstart="onDragStart(event)">
                 <button type="button" class="close" aria-label="Close" style="padding-right:5px;color:red;" onclick="deleteTask(this)">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <label><input type="checkbox" class="to-do-task-checkbox" value="" />{{TaskName}}</label>
+                <input type="checkbox" class="to-do-task-checkbox" onclick="checkboxChange(this)" value="" />
+                <span>{{TaskName}}</span>
                 <p class="taskID" hidden>{{ID}}</p>
             </li>
             {{/toDoList}}
-            <li class="to-do-task">
+            <li class="to-do-task new-task">
                 <form id="new-task-form" action="javascript:addTask()">
                     <input type="text" class="add-task-input" maxlength="50" placeholder="Add Task">
                     <input type="submit" style="display:none;">
@@ -76,11 +78,12 @@
         </script>
         <script id="completed-list-template" type="text/html">
             {{#completedList}}
-            <li class="to-do-task">
+            <li class="to-do-task" ondragstart="onDragStart(event)">
                 <button type="button" class="close" aria-label="Close" style="padding-right:5px;color:red;" onclick="deleteTask(this)">
                     <span aria-hidden="true">&times;</span>
                 </button>
-                <label><input type="checkbox" class="to-do-task-checkbox" value="" checked/>{{TaskName}}</label>
+                <input type="checkbox" class="to-do-task-checkbox" onclick="checkboxChange(this)" value="" checked/>
+                <span>{{TaskName}}</span>
                 <p class="taskID" hidden>{{ID}}</p>
             </li>
             {{/completedList}}

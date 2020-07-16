@@ -143,6 +143,9 @@ app.get('/to-do', function(request, response) {
 // -----------------
 
 
+// -----------------------
+// ----- Users Table -----
+// -----------------------
 
 
 // POST method for authorizing login attempt
@@ -210,7 +213,13 @@ app.post('/insertUser', function(request, response) {
                             console.log("Created user " + userID);
                             var sql_insertProfileImagePath = 'INSERT INTO ProfileImagePaths(UserID,ImagePath) VALUES (@userID,@imagePath)';
                             dbConnection.query(sql_insertProfileImagePath).then(function(insertResultsTwo) {
-                                response.send({message: "Account created successfully!"});
+                                // Add entry to ToDoListOrders
+                                dbConnection.input('toDoOrder', sql.VarChar, '');
+                                dbConnection.input('completedOrder', sql.VarChar, '');
+                                var sql_insertToDoListOrder = 'INSERT INTO ToDoListOrders(UserID,ToDoOrder,CompletedOrder) VALUES (@userID,@toDoOrder,@completedOrder)';
+                                dbConnection.query(sql_insertToDoListOrder).then(function(insertResultsThree) {
+                                    response.send({message: "Account created successfully!"});
+                                })
                             })
                         });
                     }
@@ -228,6 +237,76 @@ app.post('/insertUser', function(request, response) {
     });
 });
 
+
+app.post('/updateUserAbout', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var about = request.body.about;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('about', sql.VarChar, about);
+        var sql_updateUserAbout = 'UPDATE Users SET About=@about WHERE ID=@userID';
+        dbConnection.query(sql_updateUserAbout).then(function(result) {
+            response.send({message: "About updated successfully!"});
+        });
+    })
+});
+
+
+app.post('/addSkillToUser', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var skill = "," + request.body.skill;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('skill', sql.VarChar, skill);
+        var sql_addSkillToUser = 'UPDATE Users SET Skills=Skills+@skill WHERE ID=@userID';
+        dbConnection.query(sql_addSkillToUser).then(function(result) {
+            response.send({message: "Skill added successfully!"});
+        });
+    })
+})
+
+
+app.post('/deleteSkill', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var skill = "," + request.body.skill;
+    // open db connection
+    sql.connect(config,function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('skill', sql.VarChar, skill);
+        // First we must get the string contained in Skills column of Users table
+        var sql_getUserSkills = 'SELECT * FROM Users WHERE ID=@userID';
+        dbConnection.query(sql_getUserSkills).then(function(result) {
+            var skillString = result.recordset[0]["Skills"];
+            var newSkillString = skillString.replace(skill, "");
+            // Now with the new updated skill string, put it back in table
+            dbConnection.input('newSkillString', sql.VarChar, newSkillString);
+            var sql_updateUserSkills = 'UPDATE Users SET Skills=@newSkillString WHERE ID=@userID';
+            dbConnection.query(sql_updateUserSkills).then(function(result2) {
+                response.send({message: "Skill deleted successfully!"});
+            })
+        })
+    })
+})
+
+
+
+// ---------------------------------
+// ----- JobApplications Table -----
+// ---------------------------------
 
 app.post('/insertJobApplication', function(request, response) {
     // Get input info
@@ -321,70 +400,9 @@ app.post('/updateJobApplicationColumn', function(request, response) {
 });
 
 
-app.post('/updateUserAbout', function(request, response) {
-    // Get input info
-    var userID = request.body.userID;
-    var about = request.body.about;
-    // open db connection
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        // initialize connection and parameters
-        var dbConnection = new sql.Request();
-        dbConnection.input('userID', sql.Int, userID);
-        dbConnection.input('about', sql.VarChar, about);
-        var sql_updateUserAbout = 'UPDATE Users SET About=@about WHERE ID=@userID';
-        dbConnection.query(sql_updateUserAbout).then(function(result) {
-            response.send({message: "About updated successfully!"});
-        });
-    })
-});
-
-
-app.post('/addSkillToUser', function(request, response) {
-    // Get input info
-    var userID = request.body.userID;
-    var skill = "," + request.body.skill;
-    // open db connection
-    sql.connect(config, function (err) {
-        if (err) console.log(err);
-        // initialize connection and parameters
-        var dbConnection = new sql.Request();
-        dbConnection.input('userID', sql.Int, userID);
-        dbConnection.input('skill', sql.VarChar, skill);
-        var sql_addSkillToUser = 'UPDATE Users SET Skills=Skills+@skill WHERE ID=@userID';
-        dbConnection.query(sql_addSkillToUser).then(function(result) {
-            response.send({message: "Skill added successfully!"});
-        });
-    })
-})
-
-
-app.post('/deleteSkill', function(request, response) {
-    // Get input info
-    var userID = request.body.userID;
-    var skill = "," + request.body.skill;
-    // open db connection
-    sql.connect(config,function (err) {
-        if (err) console.log(err);
-        // initialize connection and parameters
-        var dbConnection = new sql.Request();
-        dbConnection.input('userID', sql.Int, userID);
-        dbConnection.input('skill', sql.VarChar, skill);
-        // First we must get the string contained in Skills column of Users table
-        var sql_getUserSkills = 'SELECT * FROM Users WHERE ID=@userID';
-        dbConnection.query(sql_getUserSkills).then(function(result) {
-            var skillString = result.recordset[0]["Skills"];
-            var newSkillString = skillString.replace(skill, "");
-            // Now with the new updated skill string, put it back in table
-            dbConnection.input('newSkillString', sql.VarChar, newSkillString);
-            var sql_updateUserSkills = 'UPDATE Users SET Skills=@newSkillString WHERE ID=@userID';
-            dbConnection.query(sql_updateUserSkills).then(function(result2) {
-                response.send({message: "Skill deleted successfully!"});
-            })
-        })
-    })
-})
-
+// -------------------------
+// ---- ToDoTasks Table ----
+// -------------------------
 
 app.post('/insertToDoTask', function(request, response) {
     // Get input info
@@ -397,9 +415,10 @@ app.post('/insertToDoTask', function(request, response) {
         var dbConnection = new sql.Request();
         dbConnection.input('userID', sql.Int, userID);
         dbConnection.input('taskName', sql.VarChar, taskName);
-        var sql_insertToDoTask = "INSERT INTO ToDoTasks(UserID,TaskName,Completed) VALUES (@userID,@taskName,0)";
+        var sql_insertToDoTask = "INSERT INTO ToDoTasks(UserID,TaskName,Completed) VALUES (@userID,@taskName,0);  SELECT SCOPE_IDENTITY() AS ID";
         dbConnection.query(sql_insertToDoTask).then(function(results) {
-            response.send({message: "To Do Task created successfully!"});
+            var taskID = results.recordset[0]["ID"];
+            response.send({message: taskID});
         })
     })
 })
@@ -418,7 +437,7 @@ app.post('/updateToDoTask', function(request, response) {
         dbConnection.input('destination', sql.Int, destination);
         var sql_updateToDoTask = "UPDATE ToDoTasks SET Completed=@destination WHERE ID=@taskID";
         dbConnection.query(sql_updateToDoTask).then(function(results) {
-            response.send({message: "To Do Task updated successfully!"});
+            response.send({message: "Task successfully updated!"});
         })
     })
 })
@@ -439,6 +458,39 @@ app.post('/deleteToDoTask', function(request, response) {
         })
     })
 })
+
+
+// -------------------------------
+// ---- ToDoListOrders Table -----
+// -------------------------------
+
+app.post('/updateToDoListOrder', function(request, response) {
+    // Get input info
+    var userID = request.body.userID;
+    var column = request.body.column;
+    var newOrder = request.body.newOrder;
+    // open db connection
+    sql.connect(config, function (err) {
+        if (err) console.log(err);
+        // initialize connection and parameters
+        var dbConnection = new sql.Request();
+        dbConnection.input('userID', sql.Int, userID);
+        dbConnection.input('newOrder', sql.VarChar, newOrder);
+        // First we need to get the current order for 
+        if (column == "ToDoOrder") {
+            var sql_selectCurrentOrder = "UPDATE ToDoListOrders SET ToDoOrder=@newOrder WHERE UserID=@userID";
+        } else {
+            var sql_selectCurrentOrder = "UPDATE ToDoListOrders SET CompletedOrder=@newOrder WHERE UserID=@userID";
+        }
+        dbConnection.query(sql_selectCurrentOrder).then(function(results) {
+            response.send({message: "To Do List Order updated successfully!"});
+        })
+    })
+})
+
+
+
+
 
 
 // ----------------------------
@@ -535,8 +587,11 @@ io.on('connection', (socket) => {
             var dbConnection = new sql.Request();
             dbConnection.input('userID', sql.Int, userID);
             var sql_getToDoTasks = 'SELECT * FROM ToDoTasks WHERE UserID=@userID';
-            dbConnection.query(sql_getToDoTasks).then(function(results) {
-                io.to(room).emit('to-do-tasks', results.recordset);
+            dbConnection.query(sql_getToDoTasks).then(function(tasksResults) {
+                var sql_getToDoListOrders = 'SELECT * FROM ToDoListOrders WHERE UserID=@userID';
+                dbConnection.query(sql_getToDoListOrders).then(function(tasksOrderResults) {
+                    io.to(room).emit('to-do-tasks', {tasks: tasksResults.recordset, tasksOrder: tasksOrderResults.recordset});
+                })
             })
         })
     })
